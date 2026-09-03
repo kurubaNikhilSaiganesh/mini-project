@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { BUILDINGS, EVENTS, findPath, getBuildingById, calcRouteStats } from './data';
-import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
+import DashboardView from './components/DashboardView';
+import DirectoryView from './components/DirectoryView';
 import CampusMap from './components/CampusMap';
 import RouteController from './components/RouteController';
-import EventsSection from './components/EventsSection';
 import CommandPalette from './components/CommandPalette';
 
 export const AppContext = React.createContext(null);
 
 export default function App() {
   const [theme, setTheme] = useState('light');
+  const [activeView, setActiveView] = useState('today');
+  
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [fromNode, setFromNode] = useState('');
   const [toNode, setToNode] = useState('');
@@ -20,7 +23,6 @@ export default function App() {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
   const [registerModal, setRegisterModal] = useState(null);
-  const mapSectionRef = useRef(null);
 
   // Apply theme to html element
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function App() {
     if (b) {
       setSelectedBuilding(b);
       setViewBox({ x: b.x - 200, y: b.y - 150, w: 600, h: 450 });
-      mapSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+      setActiveView('route'); // switch to map view
     }
   }, []);
 
@@ -94,112 +96,63 @@ export default function App() {
     calculateRoute, clearRoute,
     locateOnMap,
     registerModal, setRegisterModal,
-    mapSectionRef,
   };
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className="min-h-screen font-body" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
-        <Navbar />
+      <div className="flex h-screen overflow-hidden">
+        {/* Sidebar */}
+        <Sidebar 
+          activeView={activeView} 
+          setActiveView={setActiveView} 
+          theme={theme} 
+          toggleTheme={toggleTheme} 
+        />
 
-        {/* CMD Palette */}
+        {/* Main Content Area */}
+        <main className="flex-1 overflow-y-auto bg-[var(--bg-main)] px-8 relative">
+          
+          {/* Header Area */}
+          <div className="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-800 mb-4 sticky top-0 bg-[var(--bg-main)]/90 backdrop-blur-sm z-10">
+             <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+               <span className="text-[var(--accent-blue)]">ALTS campus</span> / {activeView}
+             </div>
+             
+             <div className="flex items-center gap-4">
+               <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                 Student view <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+               </button>
+             </div>
+          </div>
+
+          {/* Dynamic Views */}
+          {activeView === 'today' && <DashboardView />}
+          {activeView === 'directory' && <DirectoryView setSelectedBuilding={selectBuilding} />}
+          {activeView === 'route' && (
+            <div className="py-4 h-[calc(100vh-100px)] flex flex-col">
+              <div className="mb-4">
+                <RouteController />
+              </div>
+              <div className="flex-1 rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-white">
+                <CampusMap />
+              </div>
+            </div>
+          )}
+          
+          {/* Fallback for unbuilt views */}
+          {['complaints', 'firstaid', 'examhalls'].includes(activeView) && (
+            <div className="flex items-center justify-center h-full text-gray-400 font-medium">
+              <div className="text-center">
+                <svg className="w-16 h-16 mx-auto mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <p>This module is under construction.</p>
+              </div>
+            </div>
+          )}
+
+        </main>
+
         {cmdOpen && <CommandPalette />}
-
-        {/* Register Modal */}
-        {registerModal && (
-          <div className="cmd-overlay" onClick={() => setRegisterModal(null)}>
-            <div
-              className="card-brutal bg-white dark:bg-[#2A2A2A] p-8 max-w-md w-full mx-4"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <span className="tag-brutal mb-2 block">{registerModal.category}</span>
-                  <h2 className="font-display text-2xl uppercase">{registerModal.title}</h2>
-                </div>
-                <button
-                  onClick={() => setRegisterModal(null)}
-                  className="btn-brutal text-xl w-10 h-10 p-0 flex items-center justify-center"
-                >×</button>
-              </div>
-              <div className="border-t-2 border-black dark:border-white pt-4 space-y-3">
-                <p className="font-mono text-sm">DATE: {registerModal.date} // {registerModal.time}</p>
-                <p className="font-mono text-sm">VENUE: [{registerModal.venueName}]</p>
-                <p className="text-sm mt-3">{registerModal.description}</p>
-              </div>
-              <div className="mt-6 p-4 border-2 border-black dark:border-white bg-[#F4F4F4] dark:bg-[#1A1A1A]">
-                <p className="font-mono text-xs text-center">[ REGISTRATION CONFIRMED — CHECK YOUR EMAIL ]</p>
-                <p className="font-mono text-xs text-center mt-1 opacity-60">SYS_REF: {registerModal.id.toUpperCase()}-{Date.now().toString(36).toUpperCase()}</p>
-              </div>
-              <button
-                onClick={() => setRegisterModal(null)}
-                className="btn-brutal btn-brutal-filled w-full mt-4"
-              >CLOSE CONFIRMATION</button>
-            </div>
-          </div>
-        )}
-
-        {/* NAV ENGINE SECTION */}
-        <section ref={mapSectionRef} id="nav-engine" className="border-t-4" style={{ borderColor: 'var(--border)' }}>
-          {/* Section Header */}
-          <div className="border-b-4 px-6 py-4" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
-            <div className="flex items-center gap-4">
-              <span className="font-mono text-xs" style={{ color: '#3157FF' }}>[01]</span>
-              <h2 className="font-display text-3xl md:text-4xl uppercase tracking-tight">
-                NAV_ENGINE // FIND YOUR PATH
-              </h2>
-            </div>
-            <div className="ascii-divider text-xs mt-2">
-              {'// ───────────────────────────────────────────────── //'}
-            </div>
-          </div>
-
-          {/* Two Column Layout */}
-          <div className="grid lg:grid-cols-[380px_1fr]">
-            <RouteController />
-            <div className="border-t-4 lg:border-t-0 lg:border-l-4" style={{ borderColor: 'var(--border)' }}>
-              <CampusMap />
-            </div>
-          </div>
-        </section>
-
-        {/* COLOR BAND DIVIDER */}
-        <div className="border-t-4 border-b-4 px-6 py-1" style={{ borderColor: '#111111', background: '#3157FF' }}>
-          <p className="font-mono text-xs overflow-hidden whitespace-nowrap" style={{ color: '#C7F000', letterSpacing: '0.15em' }}>
-            {'▓'.repeat(200)}
-          </p>
-        </div>
-
-        {/* EVENTS SECTION */}
-        <EventsSection />
-
-        {/* FOOTER */}
-        <footer className="border-t-4 px-6 py-8 mt-0" style={{ borderColor: 'var(--border)', background: 'var(--bg-dark, #E8E5DC)' }}>
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-            {/* Logo + tagline */}
-            <div className="flex items-center gap-4">
-              <img
-                src="/logo.png"
-                alt="NaviGO Logo"
-                style={{ height: '72px', width: 'auto', objectFit: 'contain', display: 'block' }}
-              />
-              <div>
-                <p className="font-mono text-xs mt-1" style={{ color: '#3157FF' }}>
-                  [SYS.VER: 2.0.1 // BUILD: {new Date().getFullYear()}]
-                </p>
-                <p className="font-mono text-xs mt-0.5" style={{ opacity: 0.45 }}>
-                  CAMPUS NAVIGATION &amp; EVENT SYSTEM
-                </p>
-              </div>
-            </div>
-            {/* Right info */}
-            <div className="font-mono text-xs space-y-1 text-right" style={{ opacity: 0.45 }}>
-              <p>2D_SVG_ENGINE // NEO_BRUTALIST_UI</p>
-              <p>NAVIGATION | EXPLORATION | SYSTEM</p>
-              <p style={{ color: '#00D9FF', opacity: 0.7 }}>[STATUS: ONLINE // LIVE]</p>
-            </div>
-          </div>
-        </footer>
       </div>
     </AppContext.Provider>
   );

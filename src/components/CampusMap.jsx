@@ -30,37 +30,37 @@ function BuildingPopup({ building, onClose, onSetFrom, onSetTo }) {
   if (!building) return null;
   return (
     <div
-      className="building-popup card-brutal bg-white dark:bg-[#2A2A2A] p-4"
-      style={{ minWidth: 220, maxWidth: 280 }}
+      className="building-popup bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-5 z-50"
+      style={{ minWidth: 240, maxWidth: 300 }}
     >
       <div className="flex items-start justify-between gap-2 mb-3">
         <div>
-          <span className="tag-brutal text-xs mb-1.5 block">[{building.type.toUpperCase()}] {building.code}</span>
-          <h3 className="font-display text-base uppercase leading-tight">{building.label}</h3>
+          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1 block">[{building.type.toUpperCase()}] {building.code}</span>
+          <h3 className="font-bold text-lg leading-tight">{building.label}</h3>
         </div>
         <button
           onClick={onClose}
-          className="btn-brutal w-7 h-7 p-0 flex items-center justify-center text-sm flex-shrink-0"
+          className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center text-sm flex-shrink-0 transition-colors"
         >×</button>
       </div>
-      <p className="font-mono text-xs opacity-60 mb-2">{building.department}</p>
-      <p className="text-xs mb-3 opacity-80">{building.description}</p>
-      <div className="mb-3">
+      <p className="text-[10px] font-bold text-[var(--accent-blue)] uppercase mb-2">{building.department}</p>
+      <p className="text-sm mb-4 text-gray-600 dark:text-gray-300">{building.description}</p>
+      <div className="mb-4">
         {building.facilities.slice(0, 3).map((f) => (
-          <div key={f} className="font-mono text-xs flex items-center gap-1 opacity-70">
-            <span>▸</span> {f}
+          <div key={f} className="text-xs flex items-center gap-2 text-gray-500 dark:text-gray-400 mb-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-gray-300"></span> {f}
           </div>
         ))}
       </div>
       <div className="flex gap-2">
         <button
           onClick={() => onSetFrom(building.id)}
-          className="btn-brutal flex-1 text-xs py-1.5"
-        >SET FROM</button>
+          className="btn-secondary flex-1 text-xs py-2"
+        >Set From</button>
         <button
           onClick={() => onSetTo(building.id)}
-          className="btn-brutal btn-brutal-filled flex-1 text-xs py-1.5"
-        >SET TO</button>
+          className="btn-primary flex-1 text-xs py-2"
+        >Set To</button>
       </div>
     </div>
   );
@@ -69,37 +69,23 @@ function BuildingPopup({ building, onClose, onSetFrom, onSetTo }) {
 // ─── ZoneFilterBar ───────────────────────────────────────
 function ZoneFilterBar({ activeFilter, setFilter }) {
   return (
-    <div
-      className="flex flex-wrap gap-2 px-4 py-3 border-b-2"
-      style={{ borderColor: '#111111', background: 'var(--bg, #F4F1E8)' }}
-    >
-      {ZONE_FILTERS.map((f) => (
-        <button
-          key={f.key}
-          onClick={() => setFilter(f.key)}
-          className="font-mono text-xs px-3 py-1.5 border-2 transition-all"
-          style={{
-            borderColor: '#111111',
-            background: activeFilter === f.key ? '#3157FF' : 'var(--bg-panel, #FFFFFF)',
-            color: activeFilter === f.key ? '#FFFFFF' : '#111111',
-            boxShadow: activeFilter === f.key ? '3px 3px 0 #111111' : 'none',
-          }}
-          onMouseEnter={(e) => {
-            if (activeFilter !== f.key) {
-              e.currentTarget.style.background = '#C7F000';
-              e.currentTarget.style.color = '#111111';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (activeFilter !== f.key) {
-              e.currentTarget.style.background = 'var(--bg-panel, #FFFFFF)';
-              e.currentTarget.style.color = '#111111';
-            }
-          }}
-        >
-          [{f.label}]
-        </button>
-      ))}
+    <div className="flex flex-wrap gap-2 px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900">
+      {ZONE_FILTERS.map((f) => {
+        const isActive = activeFilter === f.key;
+        return (
+          <button
+            key={f.key}
+            onClick={() => setFilter(f.key)}
+            className={`text-xs font-medium px-4 py-2 rounded-full transition-colors ${
+              isActive 
+                ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' 
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+            }`}
+          >
+            {f.label}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -121,9 +107,9 @@ export default function CampusMap() {
   const [dragStart, setDragStart] = useState(null);
   const [popupPos, setPopupPos] = useState({ x: 20, y: 20 });
 
-  const strokeColor = theme === 'dark' ? '#FFFFFF' : '#000000';
-  const fillColor = theme === 'dark' ? '#2A2A2A' : '#F4F4F4';
-  const bgColor = theme === 'dark' ? '#1A1A1A' : '#FFFFFF';
+  const strokeColor = theme === 'dark' ? '#374151' : '#E5E7EB';
+  const fillColor = theme === 'dark' ? '#1F2937' : '#FFFFFF';
+  const bgColor = theme === 'dark' ? '#111827' : '#F9F8F6';
 
   // ─── Zoom / Pan ─────────────────────────────────────
   const zoom = useCallback((factor) => {
@@ -290,7 +276,7 @@ export default function CampusMap() {
                 {isGate ? (
                   <polygon
                     points={`${cx},${b.y} ${b.x + b.w},${cy} ${cx},${b.y + b.h} ${b.x},${cy}`}
-                    fill={isSelected ? '#3157FF' : (theme === 'dark' ? '#2A2A2A' : '#E8E5DC')}
+                    fill={isSelected ? '#5465FF' : fillColor}
                     stroke={bStroke}
                     strokeWidth={bStrokeW}
                   />
@@ -300,6 +286,8 @@ export default function CampusMap() {
                     y={b.y}
                     width={b.w}
                     height={b.h}
+                    rx="6"
+                    ry="6"
                     fill={bFill}
                     stroke={bStroke}
                     strokeWidth={bStrokeW}
@@ -393,31 +381,31 @@ export default function CampusMap() {
           </div>
         )}
 
-        {/* Map Controls (bottom-right) — using btn-brutal-icon for correct sizing */}
-        <div className="absolute bottom-4 right-4 flex flex-col gap-2" style={{ zIndex: 30 }}>
+        {/* Map Controls (bottom-right) */}
+        <div className="absolute bottom-4 right-4 flex flex-col gap-2 shadow-sm rounded-xl overflow-hidden bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700" style={{ zIndex: 30 }}>
           <button
             onClick={() => zoom(0.75)}
-            className="btn-brutal-icon"
+            className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700"
             aria-label="Zoom in"
             title="Zoom In"
           >
-            <ZoomIn size={17} strokeWidth={2.5} />
+            <ZoomIn size={18} strokeWidth={2} />
           </button>
           <button
             onClick={() => zoom(1.33)}
-            className="btn-brutal-icon"
+            className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700"
             aria-label="Zoom out"
             title="Zoom Out"
           >
-            <ZoomOut size={17} strokeWidth={2.5} />
+            <ZoomOut size={18} strokeWidth={2} />
           </button>
           <button
             onClick={resetView}
-            className="btn-brutal-icon"
+            className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             aria-label="Reset view"
             title="Reset View"
           >
-            <Maximize size={17} strokeWidth={2.5} />
+            <Maximize size={18} strokeWidth={2} />
           </button>
         </div>
 
