@@ -1,0 +1,462 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Archivo+Black&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CSS CUSTOM PROPERTIES — COLOR SYSTEM
+   ============================================================ */
+:root {
+  /* Brand palette */
+  --c-paper:   #F4F1E8;   /* Warm Paper — 60% bg */
+  --c-blue:    #3157FF;   /* Hyper Blue — primary */
+  --c-violet:  #7C3AED;   /* Digital Violet — secondary */
+  --c-lime:    #C7F000;   /* Acid Lime — accent */
+  --c-orange:  #FF6B1A;   /* Signal Orange — warnings */
+  --c-cyan:    #00D9FF;   /* Electric Cyan — technical */
+  --c-ink:     #111111;   /* Ink Black — borders/text */
+  --c-white:   #FFFFFF;   /* Pure White — surfaces */
+
+  /* Light mode semantic tokens */
+  --bg:        var(--c-paper);
+  --bg-panel:  var(--c-white);
+  --bg-dark:   #E8E5DC;   /* slightly darker paper */
+  --fg:        var(--c-ink);
+  --border:    var(--c-ink);
+  --shadow:    var(--c-ink);
+
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dark {
+  --bg:        #0F0F0F;
+  --bg-panel:  #1A1A1A;
+  --bg-dark:   #161616;
+  --fg:        #F4F1E8;
+  --border:    #F4F1E8;
+  --shadow:    #F4F1E8;
+}
+
+/* ============================================================
+   BASE RESETS — NEO-BRUTALISM
+   ============================================================ */
+*, *::before, *::after {
+  border-radius: 0 !important;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: 'Space Grotesk', sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ============================================================
+   BRUTAL BUTTON SYSTEM
+   ============================================================ */
+.btn-brutal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 3px solid var(--c-ink);
+  background: var(--c-white);
+  color: var(--c-ink);
+  font-family: 'Outfit', 'Archivo Black', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  box-shadow: 5px 5px 0px var(--c-ink);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+  user-select: none;
+  position: relative;
+  text-decoration: none;
+}
+
+.btn-brutal:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px var(--c-ink);
+  background: var(--c-lime);
+  color: var(--c-ink);
+}
+
+.btn-brutal:active {
+  transform: translate(4px, 4px);
+  box-shadow: 1px 1px 0px var(--c-ink);
+}
+
+/* Primary / filled variant — Hyper Blue */
+.btn-brutal-filled {
+  background: var(--c-blue);
+  color: var(--c-white);
+  border-color: var(--c-ink);
+}
+.btn-brutal-filled:hover {
+  background: #1A3FE0;
+  color: var(--c-white);
+  box-shadow: 7px 7px 0px var(--c-ink);
+}
+
+/* Icon-only buttons (no padding override needed — fixed with explicit style) */
+.btn-brutal-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 3px solid var(--c-ink);
+  background: var(--c-white);
+  color: var(--c-ink);
+  cursor: pointer;
+  box-shadow: 4px 4px 0px var(--c-ink);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+  flex-shrink: 0;
+}
+.btn-brutal-icon:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 6px 6px 0px var(--c-ink);
+  background: var(--c-lime);
+}
+.btn-brutal-icon:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0px var(--c-ink);
+}
+
+/* DARK MODE BUTTONS */
+.dark .btn-brutal {
+  border-color: var(--c-paper);
+  background: #1A1A1A;
+  color: var(--c-paper);
+  box-shadow: 5px 5px 0px var(--c-paper);
+}
+.dark .btn-brutal:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px var(--c-paper);
+  background: var(--c-blue);
+  color: var(--c-white);
+}
+.dark .btn-brutal:active {
+  box-shadow: 1px 1px 0px var(--c-paper);
+}
+.dark .btn-brutal-filled {
+  background: var(--c-blue);
+  color: var(--c-white);
+  border-color: var(--c-paper);
+}
+.dark .btn-brutal-filled:hover {
+  background: #1A3FE0;
+}
+
+.dark .btn-brutal-icon {
+  border-color: var(--c-paper);
+  background: #1A1A1A;
+  color: var(--c-paper);
+  box-shadow: 4px 4px 0px var(--c-paper);
+}
+.dark .btn-brutal-icon:hover {
+  background: var(--c-blue);
+  color: var(--c-white);
+  box-shadow: 6px 6px 0px var(--c-paper);
+}
+.dark .btn-brutal-icon:active {
+  box-shadow: 1px 1px 0px var(--c-paper);
+}
+
+/* ============================================================
+   BRUTAL CARD
+   ============================================================ */
+.card-brutal {
+  border: 3px solid var(--c-ink);
+  background: var(--c-white);
+  box-shadow: 5px 5px 0px var(--c-ink);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.card-brutal:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 7px 7px 0px var(--c-ink);
+}
+.dark .card-brutal {
+  border-color: var(--c-paper);
+  background: #1A1A1A;
+  box-shadow: 5px 5px 0px var(--c-paper);
+}
+.dark .card-brutal:hover {
+  box-shadow: 7px 7px 0px var(--c-paper);
+}
+
+/* ============================================================
+   MARQUEE TICKER
+   ============================================================ */
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+}
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ============================================================
+   SVG MAP ANIMATIONS
+   ============================================================ */
+@keyframes dash-flow {
+  from { stroke-dashoffset: 800; }
+  to { stroke-dashoffset: 0; }
+}
+
+.route-path {
+  stroke-dasharray: 12 6;
+  animation: dash-flow 2s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.pulse-marker {
+  animation: pulse-ring 1.5s ease-in-out infinite;
+}
+
+/* Status indicator pulse */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+.status-dot {
+  animation: status-pulse 1.5s ease-in-out infinite;
+  background-color: var(--c-lime) !important;
+  box-shadow: 0 0 6px var(--c-lime);
+}
+
+/* ============================================================
+   TAGS / BADGES (HARD-EDGED)
+   ============================================================ */
+.tag-brutal {
+  display: inline-block;
+  border: 2px solid var(--c-ink);
+  background: var(--c-lime);
+  color: var(--c-ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  line-height: 1.4;
+}
+.dark .tag-brutal {
+  border-color: var(--c-ink);
+  background: var(--c-lime);
+  color: var(--c-ink);
+}
+
+/* ============================================================
+   SECTION DIVIDERS
+   ============================================================ */
+.ascii-divider {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--c-blue);
+  letter-spacing: 0.05em;
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 4px solid var(--c-ink);
+  padding-top: 0.5rem;
+  margin: 1.5rem 0 0;
+}
+.dark .ascii-divider {
+  color: var(--c-cyan);
+  border-top-color: var(--c-paper);
+}
+
+/* ============================================================
+   INPUT / SELECT BRUTALIST
+   ============================================================ */
+.input-brutal {
+  border: 3px solid var(--c-ink);
+  background: var(--c-white);
+  color: var(--c-ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  width: 100%;
+  box-shadow: 3px 3px 0px var(--c-ink);
+  transition: box-shadow 0.1s ease;
+}
+.input-brutal:focus {
+  box-shadow: 5px 5px 0px var(--c-blue);
+  border-color: var(--c-blue);
+}
+.dark .input-brutal {
+  border-color: var(--c-paper);
+  background: #1A1A1A;
+  color: var(--c-paper);
+  box-shadow: 3px 3px 0px var(--c-paper);
+}
+.dark .input-brutal:focus {
+  box-shadow: 5px 5px 0px var(--c-blue);
+  border-color: var(--c-blue);
+}
+
+.select-brutal {
+  border: 3px solid var(--c-ink);
+  background: var(--c-white);
+  color: var(--c-ink);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  box-shadow: 3px 3px 0px var(--c-ink);
+  transition: box-shadow 0.1s ease, border-color 0.1s ease;
+}
+.select-brutal:focus {
+  box-shadow: 5px 5px 0px var(--c-blue);
+  border-color: var(--c-blue);
+}
+.dark .select-brutal {
+  border-color: var(--c-paper);
+  background: #1A1A1A;
+  color: var(--c-paper);
+  box-shadow: 3px 3px 0px var(--c-paper);
+}
+.dark .select-brutal:focus {
+  box-shadow: 5px 5px 0px var(--c-blue);
+  border-color: var(--c-blue);
+}
+
+/* ============================================================
+   CORNER BOLT DECORATIONS
+   ============================================================ */
+.corner-bolts {
+  position: relative;
+}
+.corner-bolts::before,
+.corner-bolts::after {
+  content: '+';
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-blue);
+  line-height: 1;
+}
+.corner-bolts::before { top: -4px; left: -4px; }
+.corner-bolts::after { bottom: -4px; right: -4px; }
+.dark .corner-bolts::before,
+.dark .corner-bolts::after { color: var(--c-cyan); }
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--c-paper); }
+::-webkit-scrollbar-thumb { background: var(--c-blue); border: 2px solid var(--c-paper); }
+.dark ::-webkit-scrollbar-track { background: #1A1A1A; }
+.dark ::-webkit-scrollbar-thumb { background: var(--c-blue); border-color: #1A1A1A; }
+
+/* Command palette overlay */
+.cmd-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.75);
+  z-index: 999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  backdrop-filter: blur(2px);
+}
+.dark .cmd-overlay {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+/* Building popup */
+.building-popup {
+  position: absolute;
+  z-index: 50;
+  min-width: 240px;
+  max-width: 300px;
+}
+
+/* Bento grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: minmax(180px, auto);
+  gap: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .bento-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bento-large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.bento-medium {
+  grid-column: span 2;
+}
+.bento-small {
+  grid-column: span 1;
+}
+
+@media (max-width: 640px) {
+  .bento-large, .bento-medium, .bento-small {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+}
+
+/* ============================================================
+   NAV DESKTOP LINKS (MAP / EVENTS buttons in navbar)
+   ============================================================ */
+.nav-desktop-link {
+  display: none;
+}
+@media (min-width: 768px) {
+  .nav-desktop-link {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* ============================================================
+   SECTION HEADER ACCENT LINES
+   ============================================================ */
+.section-number {
+  color: var(--c-blue);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+.dark .section-number {
+  color: var(--c-cyan);
+}
