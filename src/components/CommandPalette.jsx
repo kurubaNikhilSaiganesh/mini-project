@@ -1,108 +1,242 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
-import { Search, X, ArrowRight, Building2 } from 'lucide-react';
+import { useContext, useState, useRef, useEffect } from 'react';
+import { Search, Building2, ArrowRight } from 'lucide-react';
 import { AppContext } from '../App';
-import { BUILDINGS } from '../data';
+import { BUILDINGS, ROOMS, FACULTY } from '../data';
+
+// Build searchable items from all data sources
+const SEARCH_ITEMS = [
+  ...BUILDINGS.map((b) => ({
+    id: b.id,
+    title: b.label,
+    subtitle: `${b.code} // ${b.department}`,
+    tag: b.type.toUpperCase(),
+    type: 'building',
+    action: 'locate',
+  })),
+  ...ROOMS.map((r) => ({
+    id: r.id,
+    title: `Room ${r.number}`,
+    subtitle: `${r.building} · ${r.floor} Floor · ${r.type}`,
+    tag: 'ROOM',
+    type: 'room',
+    action: 'room',
+    buildingId: r.buildingId,
+  })),
+  ...FACULTY.map((f) => ({
+    id: f.id,
+    title: f.name,
+    subtitle: `${f.designation} · ${f.department}`,
+    tag: 'FACULTY',
+    type: 'faculty',
+    action: 'faculty',
+    buildingId: f.buildingId,
+  })),
+];
 
 export default function CommandPalette() {
-  const { setCmdOpen, setSelectedBuilding, setViewBox, locateOnMap } = useContext(AppContext);
+  const { setCmdOpen, locateOnMap } = useContext(AppContext);
   const [query, setQuery] = useState('');
+  const [cursor, setCursor] = useState(0);
   const inputRef = useRef(null);
+  const listRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
-  const filtered = BUILDINGS.filter((b) =>
-    b.label.toLowerCase().includes(query.toLowerCase()) ||
-    b.department.toLowerCase().includes(query.toLowerCase()) ||
-    b.type.toLowerCase().includes(query.toLowerCase())
-  );
+  const filtered = query.trim()
+    ? SEARCH_ITEMS.filter((item) =>
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        item.subtitle.toLowerCase().includes(query.toLowerCase()) ||
+        item.tag.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, 12)
+    : BUILDINGS.slice(0, 8).map((b) => ({
+        id: b.id,
+        title: b.label,
+        subtitle: `${b.code} // ${b.department}`,
+        tag: b.type.toUpperCase(),
+        type: 'building',
+        action: 'locate',
+      }));
 
-  const handleSelect = (building) => {
-    locateOnMap(building.id);
+  // Reset cursor when results change
+  useEffect(() => {
+    setCursor(0);
+  }, [query]);
+
+  // Scroll cursor item into view
+  useEffect(() => {
+    const el = listRef.current?.children[cursor];
+    el?.scrollIntoView({ block: 'nearest' });
+  }, [cursor]);
+
+  const handleSelect = (item) => {
+    if (item.action === 'locate' || item.action === 'room' || item.action === 'faculty') {
+      const bid = item.buildingId || item.id;
+      locateOnMap(bid);
+    }
     setCmdOpen(false);
   };
 
-  const handleKey = (e, building) => {
-    if (e.key === 'Enter' || e.key === ' ') handleSelect(building);
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setCursor((c) => Math.min(c + 1, filtered.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setCursor((c) => Math.max(c - 1, 0));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (filtered[cursor]) handleSelect(filtered[cursor]);
+    } else if (e.key === 'Escape') {
+      setCmdOpen(false);
+    }
+  };
+
+  const TAG_COLORS = {
+    BUILDING: '#3157FF', ACADEMIC: '#3157FF', ADMIN: '#FF4757',
+    LIBRARY: '#747DFF', LAB: '#F4B400', HOSTEL: '#00D9FF',
+    CANTEEN: '#FF6B1A', AUDITORIUM: '#9333EA', SPORTS: '#087F45',
+    GATE: '#9CA3AF', ROOM: '#087F45', FACULTY: '#F4B400',
   };
 
   return (
-    <div className="cmd-overlay" onClick={() => setCmdOpen(false)}>
+    <div
+      className="cmd-overlay"
+      onClick={() => setCmdOpen(false)}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Campus search"
+    >
       <div
-        className="w-full max-w-xl mx-4 border-4 border-black dark:border-white bg-white dark:bg-[#1A1A1A] shadow-brutal"
-        style={{ boxShadow: '8px 8px 0px #000' }}
+        className="w-full max-w-lg mx-4 border-2 border-[#111111] dark:border-white bg-white dark:bg-[#111111]"
+        style={{ boxShadow: '8px 8px 0 #111111' }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center" style={{ borderBottom: '3px solid #111111' }}>
-          {/* Mini logo */}
-          <img
-            src="/logo.png"
-            alt="NaviGO"
-            style={{ height: '32px', width: 'auto', objectFit: 'contain', marginLeft: '12px', flexShrink: 0, display: 'block' }}
-          />
-          <div style={{ width: '1px', height: '24px', background: '#111111', margin: '0 12px', opacity: 0.2 }} />
-          <Search size={16} style={{ opacity: 0.5, flexShrink: 0 }} />
+        {/* Search input row */}
+        <div
+          className="flex items-center border-b-2 border-[#111111] dark:border-[#333333]"
+          role="searchbox"
+        >
+          <div className="pl-4 shrink-0">
+            <img
+              src="/logo.png"
+              alt="NaviGO"
+              style={{ height: 24, width: 'auto', objectFit: 'contain' }}
+            />
+          </div>
+          <div className="w-px h-6 bg-[#E5E7EB] dark:bg-[#333333] mx-3" />
+          <Search size={15} className="text-gray-400 shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="SEARCH BUILDINGS, DEPARTMENTS..."
-            className="flex-1 px-3 py-4 font-mono text-sm bg-transparent outline-none placeholder:opacity-40 uppercase tracking-wide"
+            onKeyDown={handleKeyDown}
+            placeholder="SEARCH CAMPUS — BUILDINGS, ROOMS, FACULTY"
+            className="flex-1 px-3 py-4 font-mono text-xs bg-transparent outline-none placeholder:text-gray-400 placeholder:text-[10px] uppercase tracking-wide dark:text-white"
+            aria-autocomplete="list"
+            aria-controls="cmd-results"
+            aria-activedescendant={`cmd-item-${cursor}`}
           />
           <button
-            className="mr-3 font-mono text-xs border-2 px-2 py-1 transition-colors"
-            style={{ borderColor: '#111111' }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#3157FF'; e.currentTarget.style.color = '#FFF'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'inherit'; }}
+            className="mr-3 font-mono text-[10px] border-2 border-[#111111] dark:border-[#333333] px-2 py-1 hover:bg-[var(--navigo-yellow)] hover:border-[var(--navigo-yellow)] hover:text-[#111111] transition-colors"
             onClick={() => setCmdOpen(false)}
+            aria-label="Close palette"
           >
             ESC
           </button>
         </div>
 
-        {/* Results list */}
-        <div className="max-h-80 overflow-y-auto">
+        {/* Section label */}
+        {!query && (
+          <div className="px-4 pt-3 pb-1">
+            <p className="font-mono text-[9px] text-gray-400 uppercase tracking-widest">Quick Access</p>
+          </div>
+        )}
+        {query && filtered.length > 0 && (
+          <div className="px-4 pt-3 pb-1">
+            <p className="font-mono text-[9px] text-gray-400 uppercase tracking-widest">
+              {filtered.length} result{filtered.length !== 1 ? 's' : ''} for &quot;{query}&quot;
+            </p>
+          </div>
+        )}
+
+        {/* Results */}
+        <div
+          id="cmd-results"
+          ref={listRef}
+          className="max-h-72 overflow-y-auto"
+          role="listbox"
+        >
           {filtered.length === 0 ? (
-            <div className="px-4 py-6 font-mono text-sm text-center opacity-50">
-              [NO RESULTS FOUND]
+            <div className="px-4 py-8 font-mono text-xs text-center text-gray-400 uppercase tracking-wider">
+              [NO RESULTS] &mdash; Try &quot;library&quot;, &quot;lab&quot;, or a faculty name
             </div>
           ) : (
-            filtered.map((b, idx) => (
-              <div
-                key={b.id}
-                role="button"
-                tabIndex={0}
-                aria-label={`Navigate to ${b.label}`}
-                onClick={() => handleSelect(b)}
-                onKeyDown={(e) => handleKey(e, b)}
-                className="flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors group border-b border-[#E5E5E5] dark:border-[#3A3A3A]"
-              >
-                <div className="flex-shrink-0 w-8 h-8 border-2 border-current flex items-center justify-center">
-                  <Building2 size={14} />
+            filtered.map((item, idx) => {
+              const isActive = cursor === idx;
+              const tagColor = TAG_COLORS[item.tag] || '#9CA3AF';
+              return (
+                <div
+                  id={`cmd-item-${idx}`}
+                  key={`${item.type}-${item.id}`}
+                  role="option"
+                  aria-selected={isActive}
+                  tabIndex={-1}
+                  onClick={() => handleSelect(item)}
+                  onMouseEnter={() => setCursor(idx)}
+                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-[#E5E7EB] dark:border-[#1A1A1A] transition-colors ${
+                    isActive
+                      ? 'bg-[var(--navigo-yellow)] text-[#111111]'
+                      : 'hover:bg-[#F7F5F0] dark:hover:bg-[#1A1A1A]'
+                  }`}
+                >
+                  {/* Icon box */}
+                  <div
+                    className="w-8 h-8 border-2 flex items-center justify-center shrink-0"
+                    style={{
+                      borderColor: isActive ? '#111111' : tagColor,
+                      color: isActive ? '#111111' : tagColor,
+                    }}
+                  >
+                    <Building2 size={13} />
+                  </div>
+
+                  {/* Text */}
+                  <div className="flex-1 min-w-0">
+                    <p className="font-bold text-sm truncate">{item.title}</p>
+                    <p className={`font-mono text-[9px] truncate ${isActive ? 'text-[#333333]' : 'text-gray-400'}`}>
+                      {item.subtitle}
+                    </p>
+                  </div>
+
+                  {/* Tag */}
+                  <span
+                    className="font-mono text-[9px] font-bold px-1.5 py-0.5 border shrink-0"
+                    style={{
+                      color: isActive ? '#111111' : tagColor,
+                      borderColor: isActive ? '#111111' : tagColor,
+                      background: isActive ? 'transparent' : tagColor + '18',
+                    }}
+                  >
+                    {item.tag}
+                  </span>
+
+                  <ArrowRight size={12} className={isActive ? 'text-[#111111]' : 'text-gray-300'} />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-display text-sm uppercase">{b.label}</p>
-                  <p className="font-mono text-xs opacity-60">{b.code} // {b.department}</p>
-                </div>
-                <span className="font-mono text-xs opacity-40 uppercase group-hover:opacity-100">
-                  [{b.type}]
-                </span>
-                <ArrowRight size={14} className="opacity-40 group-hover:opacity-100" />
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 
-        {/* Footer hint */}
-        <div className="px-4 py-2 flex gap-4 items-center" style={{ borderTop: '2px solid #E5E5E5' }}>
-          <span className="font-mono text-xs" style={{ opacity: 0.4 }}>↑↓ NAVIGATE</span>
-          <span className="font-mono text-xs" style={{ opacity: 0.4 }}>↵ SELECT</span>
-          <span className="font-mono text-xs" style={{ opacity: 0.4 }}>ESC CLOSE</span>
-          <span className="font-mono text-xs ml-auto" style={{ color: '#3157FF', opacity: 0.8 }}>
-            {filtered.length} RESULTS
+        {/* Footer hint bar */}
+        <div className="px-4 py-2 flex gap-4 items-center border-t-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#0A0A0A]">
+          <span className="font-mono text-[9px] text-gray-400 uppercase">↑↓ Navigate</span>
+          <span className="font-mono text-[9px] text-gray-400 uppercase">↵ Select</span>
+          <span className="font-mono text-[9px] text-gray-400 uppercase">ESC Close</span>
+          <span className="font-mono text-[9px] ml-auto" style={{ color: 'var(--navigo-yellow)' }}>
+            {SEARCH_ITEMS.length} items indexed
           </span>
         </div>
       </div>

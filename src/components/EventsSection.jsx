@@ -1,64 +1,139 @@
-import React from 'react';
+import { useState } from 'react';
 import { EVENTS } from '../data';
 import MarqueeTicker from './MarqueeTicker';
 import EventCard from './EventCard';
 
+const CATEGORIES = ['ALL', ...new Set(EVENTS.map((e) => e.category))];
+const STATUSES   = ['ALL', 'UPCOMING', 'COMPLETED'];
+
 const SPAN_CLASS = {
-  large: 'bento-large',
+  large:  'bento-large',
   medium: 'bento-medium',
-  small: 'bento-small',
+  small:  'bento-small',
 };
 
 export default function EventsSection() {
+  const [activeCat,    setActiveCat]    = useState('ALL');
+  const [activeStatus, setActiveStatus] = useState('ALL');
+
+  const filtered = EVENTS.filter((e) => {
+    const catOk    = activeCat    === 'ALL' || e.category === activeCat;
+    const statusOk = activeStatus === 'ALL' || e.status   === activeStatus;
+    return catOk && statusOk;
+  });
+
+  const upcomingCount  = EVENTS.filter((e) => e.status === 'UPCOMING').length;
+  const completedCount = EVENTS.filter((e) => e.status === 'COMPLETED').length;
+
   return (
-    <section id="events" className="border-t-4 border-black dark:border-white">
-      {/* Section Header */}
-      <div className="border-b-4 px-6 py-4" style={{ borderColor: 'var(--border)', background: 'var(--bg)' }}>
-        <div className="flex items-center gap-4">
-          <span className="font-mono text-xs" style={{ color: '#3157FF' }}>[02]</span>
-          <h2 className="font-display text-3xl md:text-4xl uppercase tracking-tight">
-            BULLETIN // CAMPUS SHOWCASE &amp; EVENTS
-          </h2>
-        </div>
-        <div className="font-mono text-xs mt-2" style={{ color: '#7C3AED', opacity: 0.7 }}>
-          {'// ─────────────────────────────────────────────────── //'}
+    <div className="max-w-7xl mx-auto">
+      {/* Section header */}
+      <div className="px-4 md:px-8 py-8 border-b-2 border-[#111111] dark:border-[#333333]">
+        <p className="font-mono text-[10px] text-[var(--navigo-yellow)] uppercase tracking-widest mb-2">
+          [EVENTS_BULLETIN]
+        </p>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight">
+              Campus Events.
+            </h1>
+            <p className="text-gray-500 text-sm mt-2">
+              {upcomingCount} upcoming · {completedCount} completed
+            </p>
+          </div>
+
+          {/* Stats row */}
+          <div className="flex gap-6">
+            {[
+              { label: 'Total', value: EVENTS.length },
+              { label: 'Upcoming', value: upcomingCount },
+              { label: 'Open Reg.', value: upcomingCount },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <p className="font-mono text-[9px] text-gray-400 uppercase tracking-wider">{stat.label}</p>
+                <p className="font-display text-2xl font-bold" style={{ color: 'var(--navigo-yellow)' }}>
+                  {String(stat.value).padStart(2, '0')}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Marquee Ticker */}
       <MarqueeTicker />
 
-      {/* Bento Grid */}
-      <div className="px-6 py-8">
-        <div className="bento-grid">
-          {EVENTS.map((event) => (
-            <EventCard
-              key={event.id}
-              event={event}
-              spanClass={SPAN_CLASS[event.span] || 'bento-small'}
-            />
+      {/* Filters */}
+      <div className="px-4 md:px-8 py-4 border-b-2 border-[#111111] dark:border-[#333333] flex flex-wrap gap-3">
+        {/* Category filters */}
+        <div className="flex flex-wrap gap-2">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCat(cat)}
+              className={`font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 border-2 transition-all ${
+                activeCat === cat
+                  ? 'border-[#111111] bg-[var(--navigo-yellow)] text-[#111111]'
+                  : 'border-[#E5E7EB] dark:border-[#2A2A2A] text-gray-500 hover:border-[#111111] dark:hover:border-white'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <div className="w-px bg-[#E5E7EB] dark:bg-[#2A2A2A] hidden sm:block" />
+
+        {/* Status filters */}
+        <div className="flex gap-2">
+          {STATUSES.map((s) => (
+            <button
+              key={s}
+              onClick={() => setActiveStatus(s)}
+              className={`font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 border-2 transition-all ${
+                activeStatus === s
+                  ? 'border-[#111111] bg-[#111111] text-white'
+                  : 'border-[#E5E7EB] dark:border-[#2A2A2A] text-gray-500 hover:border-[#111111] dark:hover:border-white'
+              }`}
+            >
+              {s}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Bottom stats bar — Warm Paper */}
-      <div className="border-t-4 px-6 py-4 flex flex-wrap gap-6" style={{ borderColor: 'var(--border)', background: 'var(--bg-dark, #E8E5DC)' }}>
-        <div>
-          <p className="font-mono text-xs" style={{ color: '#7C3AED' }}>TOTAL EVENTS</p>
-          <p className="font-display text-2xl">{EVENTS.length.toString().padStart(2, '0')}</p>
-        </div>
-        <div>
-          <p className="font-mono text-xs" style={{ color: '#7C3AED' }}>UPCOMING THIS MONTH</p>
-          <p className="font-display text-2xl">04</p>
-        </div>
-        <div>
-          <p className="font-mono text-xs" style={{ color: '#7C3AED' }}>OPEN REGISTRATIONS</p>
-          <p className="font-display text-2xl">06</p>
-        </div>
-        <div className="ml-auto self-center">
-          <span className="font-mono text-xs" style={{ color: '#00D9FF', opacity: 0.7 }}>[BULLETIN_SYS v2.0 // LIVE]</span>
-        </div>
+      {/* Events grid */}
+      <div className="px-4 md:px-8 py-8">
+        {filtered.length === 0 ? (
+          <div className="border-2 border-dashed border-[#E5E7EB] dark:border-[#2A2A2A] p-12 text-center">
+            <p className="font-mono text-xs uppercase tracking-wider text-gray-400">
+              NO EVENTS MATCH CURRENT FILTERS
+            </p>
+            <button
+              onClick={() => { setActiveCat('ALL'); setActiveStatus('ALL'); }}
+              className="mt-4 btn-secondary text-xs py-2 px-6"
+            >
+              Clear Filters
+            </button>
+          </div>
+        ) : (
+          <div className="bento-grid">
+            {filtered.map((event) => (
+              <EventCard
+                key={event.id}
+                event={event}
+                spanClass={SPAN_CLASS[event.span] || 'bento-small'}
+              />
+            ))}
+          </div>
+        )}
       </div>
-    </section>
+
+      {/* Bottom stats bar */}
+      <div className="border-t-2 border-[#111111] dark:border-[#333333] px-4 md:px-8 py-4 flex flex-wrap gap-6 bg-[#F0EDE4] dark:bg-[#1A1A1A]">
+        <span className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">BULLETIN_SYS v2.0 // LIVE</span>
+        <span className="font-mono text-[10px] text-gray-400 uppercase ml-auto">{filtered.length} of {EVENTS.length} events shown</span>
+      </div>
+    </div>
   );
 }

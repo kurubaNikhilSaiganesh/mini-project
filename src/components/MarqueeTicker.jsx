@@ -1,4 +1,3 @@
-import React from 'react';
 import { MARQUEE_ITEMS } from '../data';
 
 export default function MarqueeTicker() {
