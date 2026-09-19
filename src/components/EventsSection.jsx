@@ -1,10 +1,9 @@
-import { useState } from 'react';
-import { EVENTS } from '../data';
+import { useState, useContext } from 'react';
+import { AppContext } from '../App';
 import MarqueeTicker from './MarqueeTicker';
 import EventCard from './EventCard';
 
-const CATEGORIES = ['ALL', ...new Set(EVENTS.map((e) => e.category))];
-const STATUSES   = ['ALL', 'UPCOMING', 'COMPLETED'];
+const STATUSES = ['ALL', 'UPCOMING', 'COMPLETED'];
 
 const SPAN_CLASS = {
   large:  'bento-large',
@@ -13,17 +12,20 @@ const SPAN_CLASS = {
 };
 
 export default function EventsSection() {
+  const { events } = useContext(AppContext);
   const [activeCat,    setActiveCat]    = useState('ALL');
   const [activeStatus, setActiveStatus] = useState('ALL');
 
-  const filtered = EVENTS.filter((e) => {
+  const categories = ['ALL', ...new Set(events.map((e) => e.category))];
+
+  const filtered = events.filter((e) => {
     const catOk    = activeCat    === 'ALL' || e.category === activeCat;
     const statusOk = activeStatus === 'ALL' || e.status   === activeStatus;
     return catOk && statusOk;
   });
 
-  const upcomingCount  = EVENTS.filter((e) => e.status === 'UPCOMING').length;
-  const completedCount = EVENTS.filter((e) => e.status === 'COMPLETED').length;
+  const upcomingCount  = events.filter((e) => e.status === 'UPCOMING').length;
+  const completedCount = events.filter((e) => e.status === 'COMPLETED').length;
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -45,7 +47,7 @@ export default function EventsSection() {
           {/* Stats row */}
           <div className="flex gap-6">
             {[
-              { label: 'Total', value: EVENTS.length },
+              { label: 'Total', value: events.length },
               { label: 'Upcoming', value: upcomingCount },
               { label: 'Open Reg.', value: upcomingCount },
             ].map((stat) => (
@@ -67,7 +69,7 @@ export default function EventsSection() {
       <div className="px-4 md:px-8 py-4 border-b-2 border-[#111111] dark:border-[#333333] flex flex-wrap gap-3">
         {/* Category filters */}
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.map((cat) => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCat(cat)}
@@ -132,7 +134,7 @@ export default function EventsSection() {
       {/* Bottom stats bar */}
       <div className="border-t-2 border-[#111111] dark:border-[#333333] px-4 md:px-8 py-4 flex flex-wrap gap-6 bg-[#F0EDE4] dark:bg-[#1A1A1A]">
         <span className="font-mono text-[10px] text-gray-500 uppercase tracking-widest">BULLETIN_SYS v2.0 // LIVE</span>
-        <span className="font-mono text-[10px] text-gray-400 uppercase ml-auto">{filtered.length} of {EVENTS.length} events shown</span>
+        <span className="font-mono text-[10px] text-gray-400 uppercase ml-auto">{filtered.length} of {events.length} events shown</span>
       </div>
     </div>
   );

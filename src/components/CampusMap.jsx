@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useRef } from 'react';
+import { useContext, useState, useCallback, useRef } from 'react';
 import { ZoomIn, ZoomOut, Maximize } from 'lucide-react';
 import { AppContext } from '../App';
 import { BUILDINGS, GRAPH, getBuildingById } from '../data';
@@ -18,24 +18,20 @@ const ZONE_FILTERS = [
 
 const SERVICE_TYPES = ['canteen', 'auditorium', 'library', 'admin', 'gate'];
 
-// Building type → brand color
+// Building type → restrained semantic accent (used only for top strip + code tag)
+// NOT used as fill colors — buildings use neutral white/off-white fill
 const TYPE_COLOR = {
-  admin:      '#FF4757',
-  academic:   '#3157FF',
-  library:    '#747DFF',
-  lab:        '#F4B400',
-  hostel:     '#00D9FF',
-  canteen:    '#FF6B1A',
-  auditorium: '#9333EA',
-  sports:     '#087F45',
-  gate:       '#9CA3AF',
+  admin:      '#6B7280',  // neutral gray — admin
+  academic:   '#374151',  // dark slate — academic
+  library:    '#374151',  // dark slate
+  lab:        '#087F45',  // green — labs/research
+  hostel:     '#374151',  // neutral
+  canteen:    '#6B7280',  // neutral
+  auditorium: '#374151',  // neutral
+  sports:     '#087F45',  // green — active/sports
+  gate:       '#9CA3AF',  // light gray — gates
 };
 
-function getBuildingColor(b, isSelected, isOnRoute) {
-  if (isSelected) return '#F4B400'; // NaviGO yellow
-  if (isOnRoute)  return TYPE_COLOR[b.type] + '44';
-  return null; // use default fill
-}
 
 function getBuildingCenter(b) {
   return { cx: b.x + b.w / 2, cy: b.y + b.h / 2 };
@@ -156,13 +152,11 @@ export default function CampusMap() {
   const {
     selectedBuilding, setSelectedBuilding,
     fromNode, setFromNode,
-    toNode, setToNode,
+    setToNode,
     activeRoute,
     activeZoneFilter, setActiveZoneFilter,
     viewBox, setViewBox,
     theme,
-    calculateRoute,
-    navigateTo,
   } = useContext(AppContext);
 
   const svgRef = useRef(null);
@@ -294,7 +288,7 @@ export default function CampusMap() {
         >
           <defs>
             <pattern id="ng-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke={theme === 'dark' ? '#1A1A1A' : '#D5E8CC'} strokeWidth="0.5" />
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke={theme === 'dark' ? '#1F2937' : '#C8D8C0'} strokeWidth="0.75" />
             </pattern>
             <pattern id="ng-hatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
               <line x1="0" y1="0" x2="0" y2="8" stroke={theme === 'dark' ? '#1E2E1E' : '#A8D5A2'} strokeWidth="1" />
@@ -348,10 +342,14 @@ export default function CampusMap() {
             const bFill   = isSelected
               ? '#F4B400'
               : isOnRoute
-                ? (theme === 'dark' ? typeColor + '33' : typeColor + '22')
+                ? (theme === 'dark' ? '#1F2937' : '#F0F4F0')
                 : fillColor;
-            const bStroke = isSelected ? '#F4B400' : isOnRoute ? typeColor : strokeColor;
-            const bStrokeW = isSelected ? 3 : isOnRoute ? 2.5 : 1.5;
+            const bStroke = isSelected
+              ? '#F4B400'
+              : isOnRoute
+                ? '#374151'
+                : (theme === 'dark' ? '#374151' : '#D1D5DB');
+            const bStrokeW = isSelected ? 3 : isOnRoute ? 2 : 1.5;
 
             return (
               <g
@@ -417,13 +415,13 @@ export default function CampusMap() {
                 {/* Short label */}
                 <text
                   x={cx}
-                  y={cy - 4}
+                  y={cy - 5}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  fontSize="8.5"
+                  fontSize="10"
                   fontFamily="Outfit, Impact, sans-serif"
-                  fontWeight="900"
-                  fill={isSelected ? '#111111' : theme === 'dark' ? '#CCCCCC' : '#333333'}
+                  fontWeight="800"
+                  fill={isSelected ? '#111111' : theme === 'dark' ? '#E5E7EB' : '#1F2937'}
                   style={{ pointerEvents: 'none', userSelect: 'none' }}
                 >
                   {b.short}
@@ -434,10 +432,9 @@ export default function CampusMap() {
                   x={cx}
                   y={cy + 9}
                   textAnchor="middle"
-                  fontSize="6.5"
+                  fontSize="7.5"
                   fontFamily="JetBrains Mono, Space Mono, monospace"
-                  fill={isSelected ? '#111111' : typeColor}
-                  opacity={isSelected ? 0.9 : 0.7}
+                  fill={isSelected ? '#333333' : theme === 'dark' ? '#9CA3AF' : '#6B7280'}
                   style={{ pointerEvents: 'none', userSelect: 'none' }}
                 >
                   [{b.code}]

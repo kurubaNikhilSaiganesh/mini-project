@@ -348,14 +348,20 @@
   .nav-item {
     @apply w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium;
     color: var(--text-sidebar);
-    border: 2px solid transparent;
-    transition: all 200ms ease;
+    border: none;
+    border-left: 3px solid transparent;
+    transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
     cursor: pointer;
     position: relative;
+    border-radius: 0;
   }
   .nav-item:hover {
     background: var(--bg-sidebar-hover);
     color: #FFFFFF;
+  }
+  .nav-item:focus-visible {
+    outline: 2px solid var(--navigo-yellow);
+    outline-offset: -2px;
   }
   .nav-item.active {
     background: var(--bg-sidebar-hover);

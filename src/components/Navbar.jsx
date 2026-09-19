@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { Search, Sun, Moon, Menu, X, Map, CalendarDays, Activity } from 'lucide-react';
 import { AppContext } from '../App';
 

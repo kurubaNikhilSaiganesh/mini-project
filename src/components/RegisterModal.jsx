@@ -88,7 +88,7 @@ export default function RegisterModal({ event, onClose }) {
             </div>
             <h3 className="font-display text-2xl font-bold uppercase mb-2">Registered!</h3>
             <p className="text-gray-500 text-sm mb-1">
-              <strong>{form.name}</strong>, you're registered for
+              <strong>{form.name}</strong>, you&apos;re registered for
             </p>
             <p className="font-bold">{event.title}</p>
             <p className="font-mono text-xs text-gray-400 mt-1">{event.date} · {event.time}</p>

@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { BUILDINGS, EVENTS, CLASSES, FACULTY, ROOMS, TIMETABLE,
-  findPath, getBuildingById, calcRouteStats, getCurrentDay } from './data';
+import { useState, useEffect, useCallback, createContext } from 'react';
+import { findPath, getBuildingById, calcRouteStats, EVENTS as INITIAL_EVENTS, MARQUEE_ITEMS } from './data';
 import Sidebar from './components/Sidebar';
 import DashboardView from './components/DashboardView';
 import DirectoryView from './components/DirectoryView';
@@ -15,7 +14,7 @@ import RoomsView from './components/RoomsView';
 import AdminView from './components/AdminView';
 import RegisterModal from './components/RegisterModal';
 
-export const AppContext = React.createContext(null);
+export const AppContext = createContext(null);
 
 export default function App() {
   const [theme, setTheme] = useState('light');
@@ -32,6 +31,30 @@ export default function App() {
   const [cmdOpen, setCmdOpen] = useState(false);
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
   const [registerModal, setRegisterModal] = useState(null);
+
+  // Shared data state — admin writes, public pages read
+  const [events, setEvents] = useState(INITIAL_EVENTS);
+  const [announcements, setAnnouncements] = useState([]); // { id, text, severity }
+  const [roomOverrides, setRoomOverrides] = useState({}); // { classId: roomId }
+  const [timetableOverrides, setTimetableOverrides] = useState({}); // { slotId: { startTime, endTime, roomId } }
+
+  const addAnnouncement = useCallback((text, severity = 'ALERT') => {
+    const id = `ann_${Date.now()}`;
+    setAnnouncements((prev) => [{ id, text, severity }, ...prev]);
+    return id;
+  }, []);
+
+  const removeAnnouncement = useCallback((id) => {
+    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+  }, []);
+
+  const applyRoomOverride = useCallback((classId, newRoomId) => {
+    setRoomOverrides((prev) => ({ ...prev, [classId]: newRoomId }));
+  }, []);
+
+  const applyTimetableOverride = useCallback((slotId, changes) => {
+    setTimetableOverrides((prev) => ({ ...prev, [slotId]: { ...(prev[slotId] || {}), ...changes } }));
+  }, []);
 
   // Apply theme
   useEffect(() => {
@@ -127,6 +150,12 @@ export default function App() {
     navigateTo,
     mobileMenuOpen, setMobileMenuOpen,
     activeView, setActiveView,
+    // Shared data
+    events, setEvents,
+    announcements, addAnnouncement, removeAnnouncement,
+    roomOverrides, applyRoomOverride,
+    timetableOverrides, applyTimetableOverride,
+    marqueeItems: MARQUEE_ITEMS,
   };
 
   return (
@@ -216,9 +245,11 @@ export default function App() {
             {activeView === 'admin'     && <AdminView />}
 
             {activeView === 'route' && (
-              <div className="px-4 md:px-8 py-6 h-[calc(100vh-57px)] flex flex-col gap-4">
-                <RouteController />
-                <div className="flex-1 border-2 border-[#111111] dark:border-[#333333] overflow-hidden" style={{ minHeight: 300 }}>
+              <div className="flex flex-col h-[calc(100vh-57px)]">
+                <div className="px-4 md:px-6 pt-4 pb-3">
+                  <RouteController />
+                </div>
+                <div className="flex-1 border-t-2 border-[#111111] dark:border-[#333333] overflow-hidden">
                   <CampusMap />
                 </div>
               </div>
