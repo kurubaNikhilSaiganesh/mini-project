@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Search, Sun, Moon, Menu, X, Map, CalendarDays, Activity } from 'lucide-react';
-import { AppContext } from '../App';
+import { AppContext } from '../context/AppContext';
 
 export default function Navbar() {
   const { theme, toggleTheme, setCmdOpen } = useContext(AppContext);
@@ -160,3 +160,4 @@ function NavDesktopLink({ href, label, icon }) {
     </a>
   );
 }
+

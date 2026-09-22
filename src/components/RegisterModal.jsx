@@ -205,3 +205,4 @@ export default function RegisterModal({ event, onClose }) {
     </div>
   );
 }
+

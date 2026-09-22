@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { AppContext } from '../App';
+import { AppContext } from '../context/AppContext';
 import { MARQUEE_ITEMS } from '../data';
 
 export default function MarqueeTicker() {
@@ -38,3 +38,4 @@ export default function MarqueeTicker() {
     </div>
   );
 }
+

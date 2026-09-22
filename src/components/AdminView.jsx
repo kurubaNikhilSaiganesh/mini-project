@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { AppContext } from '../App';
+import { AppContext } from '../context/AppContext';
 import { BUILDINGS, FACULTY, ROOMS, CLASSES, TIMETABLE, getRoomById, getClassById } from '../data';
 
 const CATEGORIES = ['WORKSHOP', 'LECTURE', 'TECH_FEST', 'HACKATHON', 'CULTURAL_FEST', 'SPORTS', 'COMPETITION'];
@@ -575,3 +575,4 @@ export default function AdminView() {
     </div>
   );
 }
+

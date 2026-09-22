@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { MapPin, ArrowRight, Calendar } from 'lucide-react';
-import { AppContext } from '../App';
+import { AppContext } from '../context/AppContext';
 
 // Category → accent color
 const CATEGORY_ACCENT = {
@@ -111,3 +111,4 @@ export default function EventCard({ event, spanClass }) {
     </div>
   );
 }
+

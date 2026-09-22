@@ -1,6 +1,6 @@
 import { useContext, useState, useRef, useEffect } from 'react';
 import { Search, Building2, ArrowRight } from 'lucide-react';
-import { AppContext } from '../App';
+import { AppContext } from '../context/AppContext';
 import { BUILDINGS, ROOMS, FACULTY } from '../data';
 
 // Build searchable items from all data sources
@@ -109,38 +109,37 @@ export default function CommandPalette() {
       aria-label="Campus search"
     >
       <div
-        className="w-full max-w-lg mx-4 border-2 border-[#111111] dark:border-white bg-white dark:bg-[#111111]"
-        style={{ boxShadow: '8px 8px 0 #111111' }}
+        className="w-full max-w-lg mx-4 rounded-3xl glass-modal border border-[var(--glass-border-strong)] p-4 shadow-2xl overflow-hidden backdrop-blur-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Search input row */}
+        {/* Search input row — sleek curved pill */}
         <div
-          className="flex items-center border-b-2 border-[#111111] dark:border-[#333333]"
+          className="flex items-center rounded-full bg-[rgba(0,0,0,0.05)] dark:bg-[rgba(255,255,255,0.06)] border border-[var(--glass-border)] px-3.5 py-1.5 mb-3 shadow-inner"
           role="searchbox"
         >
-          <div className="pl-4 shrink-0">
+          <div className="pl-1 shrink-0">
             <img
               src="/logo.png"
-              alt="NaviGO"
-              style={{ height: 24, width: 'auto', objectFit: 'contain' }}
+              alt="ALTS"
+              style={{ height: 22, width: 'auto', objectFit: 'contain' }}
             />
           </div>
-          <div className="w-px h-6 bg-[#E5E7EB] dark:bg-[#333333] mx-3" />
-          <Search size={15} className="text-gray-400 shrink-0" />
+          <div className="w-px h-5 bg-[var(--glass-border)] mx-2.5" />
+          <Search size={15} className="text-[var(--text-muted)] shrink-0" />
           <input
             ref={inputRef}
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="SEARCH CAMPUS — BUILDINGS, ROOMS, FACULTY"
-            className="flex-1 px-3 py-4 font-mono text-xs bg-transparent outline-none placeholder:text-gray-400 placeholder:text-[10px] uppercase tracking-wide dark:text-white"
+            placeholder="Search campus — buildings, rooms, faculty..."
+            className="flex-1 px-3 py-2 text-xs bg-transparent outline-none placeholder:text-[var(--text-muted)] text-[var(--text-primary)] rounded-full"
             aria-autocomplete="list"
             aria-controls="cmd-results"
             aria-activedescendant={`cmd-item-${cursor}`}
           />
           <button
-            className="mr-3 font-mono text-[10px] border-2 border-[#111111] dark:border-[#333333] px-2 py-1 hover:bg-[var(--navigo-yellow)] hover:border-[var(--navigo-yellow)] hover:text-[#111111] transition-colors"
+            className="mr-1 font-mono text-[10px] px-2.5 py-1 rounded-full glass-btn glass-btn-ghost hover:scale-105 transition-all text-[var(--text-muted)] hover:text-[var(--text-primary)]"
             onClick={() => setCmdOpen(false)}
             aria-label="Close palette"
           >
@@ -150,13 +149,13 @@ export default function CommandPalette() {
 
         {/* Section label */}
         {!query && (
-          <div className="px-4 pt-3 pb-1">
-            <p className="font-mono text-[9px] text-gray-400 uppercase tracking-widest">Quick Access</p>
+          <div className="px-3 pt-2 pb-1.5">
+            <p className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-widest font-semibold">Quick Access</p>
           </div>
         )}
         {query && filtered.length > 0 && (
-          <div className="px-4 pt-3 pb-1">
-            <p className="font-mono text-[9px] text-gray-400 uppercase tracking-widest">
+          <div className="px-3 pt-2 pb-1.5">
+            <p className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-widest font-semibold">
               {filtered.length} result{filtered.length !== 1 ? 's' : ''} for &quot;{query}&quot;
             </p>
           </div>
@@ -166,11 +165,11 @@ export default function CommandPalette() {
         <div
           id="cmd-results"
           ref={listRef}
-          className="max-h-72 overflow-y-auto"
+          className="max-h-72 overflow-y-auto space-y-1.5 px-1 scrollbar-hide"
           role="listbox"
         >
           {filtered.length === 0 ? (
-            <div className="px-4 py-8 font-mono text-xs text-center text-gray-400 uppercase tracking-wider">
+            <div className="px-4 py-8 font-mono text-xs text-center text-[var(--text-muted)] uppercase tracking-wider">
               [NO RESULTS] &mdash; Try &quot;library&quot;, &quot;lab&quot;, or a faculty name
             </div>
           ) : (
@@ -186,18 +185,19 @@ export default function CommandPalette() {
                   tabIndex={-1}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => setCursor(idx)}
-                  className={`flex items-center gap-3 px-4 py-3 cursor-pointer border-b border-[#E5E7EB] dark:border-[#1A1A1A] transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-full cursor-pointer transition-all border ${
                     isActive
-                      ? 'bg-[var(--navigo-yellow)] text-[#111111]'
-                      : 'hover:bg-[#F7F5F0] dark:hover:bg-[#1A1A1A]'
+                      ? 'bg-[var(--gold)]/15 border-[var(--gold)]/45 text-[var(--text-primary)] shadow-sm scale-[1.01]'
+                      : 'border-transparent hover:bg-[var(--glass-2)] text-[var(--text-primary)]'
                   }`}
                 >
                   {/* Icon box */}
                   <div
-                    className="w-8 h-8 border-2 flex items-center justify-center shrink-0"
+                    className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border"
                     style={{
-                      borderColor: isActive ? '#111111' : tagColor,
-                      color: isActive ? '#111111' : tagColor,
+                      borderColor: isActive ? 'var(--gold)' : tagColor,
+                      color: isActive ? 'var(--gold)' : tagColor,
+                      background: isActive ? 'rgba(244, 180, 0, 0.14)' : tagColor + '18',
                     }}
                   >
                     <Building2 size={13} />
@@ -206,24 +206,24 @@ export default function CommandPalette() {
                   {/* Text */}
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-sm truncate">{item.title}</p>
-                    <p className={`font-mono text-[9px] truncate ${isActive ? 'text-[#333333]' : 'text-gray-400'}`}>
+                    <p className="font-mono text-[9px] truncate text-[var(--text-muted)]">
                       {item.subtitle}
                     </p>
                   </div>
 
                   {/* Tag */}
                   <span
-                    className="font-mono text-[9px] font-bold px-1.5 py-0.5 border shrink-0"
+                    className="font-mono text-[9px] font-bold px-2.5 py-0.5 rounded-full border shrink-0"
                     style={{
-                      color: isActive ? '#111111' : tagColor,
-                      borderColor: isActive ? '#111111' : tagColor,
-                      background: isActive ? 'transparent' : tagColor + '18',
+                      color: isActive ? 'var(--gold)' : tagColor,
+                      borderColor: isActive ? 'rgba(244, 180, 0, 0.40)' : tagColor,
+                      background: isActive ? 'rgba(244, 180, 0, 0.12)' : tagColor + '18',
                     }}
                   >
                     {item.tag}
                   </span>
 
-                  <ArrowRight size={12} className={isActive ? 'text-[#111111]' : 'text-gray-300'} />
+                  <ArrowRight size={13} className={isActive ? 'text-[var(--gold)] translate-x-0.5 transition-transform' : 'text-[var(--text-subtle)]'} />
                 </div>
               );
             })
@@ -231,15 +231,17 @@ export default function CommandPalette() {
         </div>
 
         {/* Footer hint bar */}
-        <div className="px-4 py-2 flex gap-4 items-center border-t-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#0A0A0A]">
-          <span className="font-mono text-[9px] text-gray-400 uppercase">↑↓ Navigate</span>
-          <span className="font-mono text-[9px] text-gray-400 uppercase">↵ Select</span>
-          <span className="font-mono text-[9px] text-gray-400 uppercase">ESC Close</span>
-          <span className="font-mono text-[9px] ml-auto" style={{ color: 'var(--navigo-yellow)' }}>
+        <div className="mt-3 px-4 py-2.5 rounded-2xl flex gap-4 items-center bg-[var(--glass-1)] border border-[var(--glass-border)]">
+          <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase">↑↓ Navigate</span>
+          <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase">↵ Select</span>
+          <span className="font-mono text-[9px] text-[var(--text-muted)] uppercase">ESC Close</span>
+          <span className="font-mono text-[9px] ml-auto font-bold" style={{ color: 'var(--gold)' }}>
             {SEARCH_ITEMS.length} items indexed
           </span>
         </div>
       </div>
+
     </div>
   );
 }
+
