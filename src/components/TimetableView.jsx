@@ -102,7 +102,7 @@ export default function TimetableView() {
                 onClick={() => setViewMode(mode)}
                 className={`px-5 py-2 rounded-full text-sm font-bold transition-all capitalize ${
                   viewMode === mode
-                    ? 'bg-amber-400 text-black shadow-sm scale-[1.02]'
+                    ? 'bg-[var(--gold)] text-white shadow-sm scale-[1.02]'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
                 }`}
               >
@@ -239,7 +239,7 @@ export default function TimetableView() {
                   {/* Day header */}
                   <div
                     className={`px-3 py-2.5 text-center border-b border-[var(--glass-border)] ${
-                      isToday ? 'bg-amber-400 text-black' : 'glass-2 text-[var(--text-primary)]'
+                      isToday ? 'bg-[var(--gold)] text-white' : 'glass-2 text-[var(--text-primary)]'
                     }`}
                   >
                     <p className="font-mono text-[10px] font-extrabold uppercase tracking-wider">

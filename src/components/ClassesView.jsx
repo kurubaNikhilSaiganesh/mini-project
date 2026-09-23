@@ -1,12 +1,12 @@
 import { useState, useContext } from 'react';
-import { CLASSES, getFacultyById, getRoomById } from '../data';
+import { getFacultyById, getRoomById } from '../data';
 import { AppContext } from '../context/AppContext';
 
 export default function ClassesView() {
-  const { locateOnMap } = useContext(AppContext);
+  const { locateOnMap, classes = [] } = useContext(AppContext);
   const [selectedClassId, setSelectedClassId] = useState(null);
 
-  const selectedClass = selectedClassId ? CLASSES.find((c) => c.id === selectedClassId) : null;
+  const selectedClass = selectedClassId ? classes.find((c) => c.id === selectedClassId) : null;
 
   return (
     <div className="px-4 md:px-8 py-8 max-w-6xl mx-auto page-enter">
@@ -19,14 +19,14 @@ export default function ClassesView() {
           Classes.
         </h1>
         <p className="text-[var(--text-muted)] text-sm mt-2">
-          {CLASSES.length} classes across {[...new Set(CLASSES.map((c) => c.department))].length} departments.
+          {classes.length} classes across {[...new Set(classes.map((c) => c.department))].length} departments.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Class list */}
         <div className="lg:col-span-1 space-y-2.5">
-          {CLASSES.map((cls) => {
+          {classes.map((cls) => {
             const isSelected = selectedClassId === cls.id;
             return (
               <button
@@ -42,7 +42,7 @@ export default function ClassesView() {
                   <span
                     className={`font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
                       isSelected
-                        ? 'bg-[var(--gold)] text-[#111111] border-[var(--gold)]'
+                        ? 'bg-[var(--gold)] text-white border-[var(--gold)]'
                         : 'bg-[var(--glass-2)] text-[var(--text-primary)] border-[var(--glass-border)]'
                     }`}
                   >
@@ -85,7 +85,7 @@ export default function ClassesView() {
                     </h2>
                     <p className="text-sm text-[var(--text-muted)] mt-2">{selectedClass.description}</p>
                   </div>
-                  <span className="font-mono text-xs bg-[var(--gold)] text-[#111111] font-bold px-3 py-1 rounded-full shrink-0 shadow-sm">
+                  <span className="font-mono text-xs bg-[var(--gold)] text-white font-bold px-3 py-1 rounded-full shrink-0 shadow-sm">
                     {selectedClass.shortName}
                   </span>
                 </div>

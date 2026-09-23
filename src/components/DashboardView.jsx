@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 import RouteController from './RouteController';
 import { TIMETABLE, getCurrentDay, getRoomById } from '../data';
@@ -31,48 +31,54 @@ const CORE_SYSTEMS = [
     label: 'Navigation',
     code: 'SYS-01',
     desc: 'Campus wayfinding with interactive BFS routing',
-    color: '#3B82F6',
-    icon: <Navigation size={22} className="text-blue-500" />,
+    color: '#007AFF',
+    icon: <Navigation size={26} className="text-white drop-shadow-md" />,
+    bgClass: 'bg-vibrant-blue'
   },
   {
     id: 'classes',
     label: 'Classes',
     code: 'SYS-02',
     desc: 'Departments, academic sections & schedules',
-    color: '#EF4444',
-    icon: <BookOpen size={22} className="text-red-500" />,
+    color: '#FF0055',
+    icon: <BookOpen size={26} className="text-white drop-shadow-md" />,
+    bgClass: 'bg-vibrant-red'
   },
   {
     id: 'rooms',
     label: 'Rooms',
     code: 'SYS-03',
     desc: 'Building, floor status, capacity & room types',
-    color: '#087F45',
-    icon: <Building size={22} className="text-emerald-500" />,
+    color: '#34C759',
+    icon: <Building size={26} className="text-white drop-shadow-md" />,
+    bgClass: 'bg-vibrant-green'
   },
   {
     id: 'faculty',
     label: 'Faculty',
     code: 'SYS-04',
     desc: 'Staff directory, office cabins & subject leads',
-    color: '#F4B400',
-    icon: <Users size={22} className="text-amber-500" />,
+    color: '#FF9500',
+    icon: <Users size={26} className="text-white drop-shadow-md" />,
+    bgClass: 'bg-vibrant-orange'
   },
   {
     id: 'timetable',
     label: 'Timetable',
     code: 'SYS-05',
     desc: 'Today & weekly period calendar view',
-    color: '#8B5CF6',
-    icon: <Clock size={22} className="text-purple-500" />,
+    color: '#5E5CE6',
+    icon: <Clock size={26} className="text-white drop-shadow-md" />,
+    bgClass: 'bg-vibrant-purple'
   },
   {
     id: 'events',
     label: 'Events',
     code: 'SYS-06',
     desc: 'Campus bulletin, hackathons, fests & workshops',
-    color: '#10B981',
-    icon: <Trophy size={22} className="text-teal-500" />,
+    color: '#00C7BE',
+    icon: <Trophy size={26} className="text-white drop-shadow-md" />,
+    bgClass: 'bg-vibrant-teal'
   },
 ];
 
@@ -97,6 +103,14 @@ const WHAT_IT_SOLVES = [
 export default function DashboardView() {
   const { navigateTo, announcements, removeAnnouncement } = useContext(AppContext);
   const date = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  // Live Clock State
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const timeString = time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: false });
 
   const currentSlot = getCurrentSlot(USER_CLASS);
   const nextSlot    = getNextSlot(USER_CLASS);
@@ -162,25 +176,27 @@ export default function DashboardView() {
               </span>
             </div>
 
+            {/* NaviGO Logo */}
             <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-2xl glass-2 border border-[var(--glass-border)] shadow-xs">
-                <img
-                  src="/logo.png"
-                  alt="ALTS"
-                  style={{ height: 36, width: 'auto', objectFit: 'contain' }}
-                />
+              <div className="w-10 h-10 shrink-0 liquid-glass-icon shadow-lg" style={{ background: 'linear-gradient(135deg, #007AFF 0%, #34C759 100%)' }}>
+                <div className="w-[28px] h-[28px] rounded-full inner-glass-symbol flex items-center justify-center">
+                  <span className="font-display font-black text-white text-[16px] drop-shadow-md">N</span>
+                </div>
               </div>
-              <span className="font-mono text-[9px] uppercase tracking-widest text-[var(--text-muted)] leading-relaxed">
-                Autonomous University Platform<br />Spatial Navigation · Schedules
+              <span className="font-display font-black text-2xl tracking-tight text-[var(--text-primary)]">
+                NaviGO
               </span>
             </div>
 
-            <h1 className="font-display text-4xl sm:text-6xl font-black uppercase leading-[1.05] tracking-tight text-[var(--text-primary)]">
-              Know Where<br />
-              <span className="bg-gradient-to-r from-amber-400 via-amber-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-sm">
-                To Go.
-              </span>
-            </h1>
+            {/* Giant Liquid Clock */}
+            <div className="mb-4">
+              <h1 
+                className="liquid-text font-display font-black leading-none tracking-tighter"
+                style={{ fontSize: 'clamp(5rem, 12vw, 9rem)', marginLeft: '-0.05em' }}
+              >
+                {timeString}
+              </h1>
+            </div>
 
             <p className="mt-4 text-[var(--text-secondary)] text-sm md:text-base leading-relaxed">
               Real-time campus wayfinding, dynamic class timetables, interactive floor directories, and live exam utilities — designed in fluid glass.
@@ -271,10 +287,9 @@ export default function DashboardView() {
                 </div>
 
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-md"
-                  style={{ background: 'var(--gold)', color: '#111' }}
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-lg liquid-glass-icon bg-vibrant-purple"
                 >
-                  <Clock size={22} strokeWidth={2.5} />
+                  <Clock size={26} strokeWidth={2.5} className="text-white drop-shadow-md" />
                 </div>
               </div>
             </div>
@@ -360,8 +375,10 @@ export default function DashboardView() {
 
               <div>
                 <div className="flex items-start justify-between mb-4">
-                  <div className="p-3 rounded-2xl glass-2 border border-[var(--glass-border)] shadow-xs transition-transform group-hover:scale-110 duration-200">
-                    {sys.icon}
+                  <div className={`w-14 h-14 rounded-[1.25rem] liquid-glass-icon ${sys.bgClass} shadow-lg transition-transform group-hover:scale-110 duration-300`}>
+                    <div className="w-[38px] h-[38px] rounded-full inner-glass-symbol flex items-center justify-center">
+                      {sys.icon}
+                    </div>
                   </div>
                   <span className="font-mono text-[10px] px-2.5 py-1 rounded-full glass-1 border border-[var(--glass-border)] text-[var(--text-muted)] font-semibold">
                     {sys.code}

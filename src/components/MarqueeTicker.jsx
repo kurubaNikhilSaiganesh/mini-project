@@ -15,20 +15,13 @@ export default function MarqueeTicker() {
   const items = [...allItems, ...allItems];
 
   return (
-    <div
-      className="overflow-hidden py-2.5"
-      style={{
-        background: '#3157FF',
-        borderTop: '4px solid #111111',
-        borderBottom: '4px solid #111111',
-      }}
-    >
+    <div className="overflow-hidden py-3 glass-2 border-y border-[var(--glass-border-strong)] shadow-sm">
       <div className="ticker-track">
         {items.map((item, i) => (
           <span
             key={i}
-            className="font-mono text-xs tracking-widest flex-shrink-0 px-6 whitespace-nowrap"
-            style={{ color: item.startsWith('[ALERT]') || item.startsWith('[EMERGENCY]') ? '#FF4757' : '#C7F000' }}
+            className="font-mono text-[11px] font-bold tracking-widest flex-shrink-0 px-6 whitespace-nowrap uppercase"
+            style={{ color: item.startsWith('[ALERT]') || item.startsWith('[EMERGENCY]') ? 'var(--red)' : 'var(--blue)' }}
           >
             {item}
             <span className="mx-6" style={{ color: '#FFFFFF', opacity: 0.4 }}>│</span>

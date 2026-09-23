@@ -4,7 +4,7 @@
 
 /* ================================================================
    ALTS — DESIGN SYSTEM
-   Brand: Gold #F4B400 · Green #087F45
+   Brand: Apple Blue #007AFF · Apple Green #34C759
    Style: Premium Glass · Spatial Depth · Restrained Motion
    ================================================================ */
 
@@ -17,28 +17,28 @@
     --bg-surface:     #F0EDE5;
     --bg-elevated:    #F8F6F1;
 
-    /* Glass surfaces — translucent whites so backdrop-filter blur is VISIBLE */
-    --glass-1:        rgba(255, 255, 255, 0.35);   /* subtle cards */
-    --glass-2:        rgba(255, 255, 255, 0.52);   /* floating controls */
-    --glass-3:        rgba(255, 255, 255, 0.68);   /* dropdowns */
-    --glass-4:        rgba(255, 255, 255, 0.82);   /* modals */
-    --glass-5:        rgba(255, 255, 255, 0.94);   /* alerts */
+    /* Glass surfaces — intense translucent whites */
+    --glass-1:        rgba(255, 255, 255, 0.45);   /* subtle cards */
+    --glass-2:        rgba(255, 255, 255, 0.65);   /* floating controls */
+    --glass-3:        rgba(255, 255, 255, 0.75);   /* dropdowns */
+    --glass-4:        rgba(255, 255, 255, 0.88);   /* modals */
+    --glass-5:        rgba(255, 255, 255, 0.96);   /* alerts */
 
-    /* Glass borders — give frosted edges a visible rim */
-    --glass-border:        rgba(255, 255, 255, 0.70);
-    --glass-border-strong: rgba(255, 255, 255, 0.90);
-    /* Inset highlight — disabled to prevent bright glare/reflections */
-    --glass-highlight: none;
+    /* Glass borders — strong frosted rims */
+    --glass-border:        rgba(255, 255, 255, 0.85);
+    --glass-border-strong: rgba(255, 255, 255, 0.95);
+    /* Inset highlight — creates thick, liquid edge */
+    --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
 
-    /* Sidebar — Frosted Luminous White Glass in Light Mode */
-    --sidebar-bg:            rgba(255, 255, 255, 0.72);
+    /* Sidebar — Frosted Luminous White Glass */
+    --sidebar-bg:            rgba(235, 242, 250, 0.75); /* Subtle blue-gray tint for contrast */
     --sidebar-surface:       rgba(255, 255, 255, 0.55);
-    --sidebar-border:        rgba(255, 255, 255, 0.85);
-    --sidebar-border-strong: rgba(255, 255, 255, 0.95);
+    --sidebar-border:        rgba(255, 255, 255, 0.70);
+    --sidebar-border-strong: rgba(255, 255, 255, 0.90);
     --sidebar-text:          #555566;
     --sidebar-text-active:   #0E0E12;
     --sidebar-hover:         rgba(0, 0, 0, 0.04);
-    --sidebar-shadow:        0 8px 30px rgba(0, 0, 0, 0.06);
+    --sidebar-shadow:        0 8px 30px rgba(0, 0, 0, 0.08);
 
     /* Typography */
     --text-primary:   #0F0F12;
@@ -47,12 +47,12 @@
     --text-subtle:    #ADADBE;
 
     /* Brand */
-    --gold:           #F4B400;
-    --gold-hover:     #D9A100;
-    --gold-light:     rgba(244, 180, 0, 0.12);
-    --gold-glow:      rgba(244, 180, 0, 0.25);
-    --green:          #087F45;
-    --green-hover:    #066034;
+    --gold:           #007AFF; /* Apple Blue */
+    --gold-hover:     #0056b3;
+    --gold-light:     rgba(0, 122, 255, 0.15);
+    --gold-glow:      rgba(0, 122, 255, 0.35);
+    --green:          #34C759; /* Apple Green */
+    --green-hover:    #248A3D;
     --green-light:    rgba(8, 127, 69, 0.10);
     --blue:           #3B82F6;
     --blue-hover:     #2563EB;
@@ -60,11 +60,11 @@
     --red:            #EF4444;
     --red-light:      rgba(239, 68, 68, 0.10);
 
-    /* Blur levels */
-    --blur-sm:        blur(10px);
-    --blur-md:        blur(20px);
-    --blur-lg:        blur(28px);
-    --blur-xl:        blur(40px);
+    /* Blur levels — intense liquid distortion */
+    --blur-sm:        blur(16px);
+    --blur-md:        blur(32px);
+    --blur-lg:        blur(48px);
+    --blur-xl:        blur(64px);
 
     /* Shadows — light mode gets warm-tinted depth */
     --shadow-xs:      0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -72,8 +72,8 @@
     --shadow-md:      0 4px 20px rgba(0, 0, 0, 0.09), 0 2px 8px rgba(0, 0, 0, 0.06);
     --shadow-lg:      0 8px 36px rgba(0, 0, 0, 0.11), 0 4px 14px rgba(0, 0, 0, 0.07);
     --shadow-xl:      0 16px 56px rgba(0, 0, 0, 0.13), 0 8px 24px rgba(0, 0, 0, 0.08);
-    --shadow-gold:    0 4px 24px rgba(244, 180, 0, 0.20);
-    --shadow-glass:   0 2px 14px rgba(0, 0, 0, 0.05);
+    --shadow-gold:    0 4px 24px rgba(0, 122, 255, 0.30); /* Now Apple Blue */
+    --shadow-glass:   0 4px 20px rgba(0, 0, 0, 0.08);
 
     /* Border radius scale */
     --radius-xs:  12px;
@@ -95,7 +95,7 @@
     /* Legacy compat */
     --bg-main:          var(--bg-base);
     --bg-sidebar:       var(--sidebar-bg);
-    --navigo-yellow:    var(--gold);
+    --navigo-yellow:    #007AFF; /* Now Apple Blue */
     --navigo-green:     var(--green);
     --card-bg:          var(--bg-elevated);
     --border-color:     var(--glass-border);
@@ -110,27 +110,27 @@
     --bg-surface:     #111116;
     --bg-elevated:    #18181F;
 
-    /* Glass surfaces — slightly brighter whites for more visible glass */
-    --glass-1:        rgba(255, 255, 255, 0.05);
-    --glass-2:        rgba(255, 255, 255, 0.09);
-    --glass-3:        rgba(255, 255, 255, 0.13);
-    --glass-4:        rgba(15, 15, 22, 0.90);
-    --glass-5:        rgba(15, 15, 22, 0.97);
+    /* Glass surfaces — brighter for stronger contrast */
+    --glass-1:        rgba(255, 255, 255, 0.08);
+    --glass-2:        rgba(255, 255, 255, 0.12);
+    --glass-3:        rgba(255, 255, 255, 0.18);
+    --glass-4:        rgba(15, 15, 22, 0.92);
+    --glass-5:        rgba(15, 15, 22, 0.98);
 
     /* Glass borders */
-    --glass-border:        rgba(255, 255, 255, 0.09);
-    --glass-border-strong: rgba(255, 255, 255, 0.16);
-    --glass-highlight: none;
+    --glass-border:        rgba(255, 255, 255, 0.15);
+    --glass-border-strong: rgba(255, 255, 255, 0.25);
+    --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 
     /* Sidebar — Frosted Obsidian Glass in Dark Mode */
-    --sidebar-bg:            rgba(14, 14, 20, 0.72);
-    --sidebar-surface:       rgba(255, 255, 255, 0.06);
-    --sidebar-border:        rgba(255, 255, 255, 0.12);
-    --sidebar-border-strong: rgba(255, 255, 255, 0.20);
+    --sidebar-bg:            rgba(14, 14, 20, 0.85);
+    --sidebar-surface:       rgba(255, 255, 255, 0.08);
+    --sidebar-border:        rgba(255, 255, 255, 0.18);
+    --sidebar-border-strong: rgba(255, 255, 255, 0.28);
     --sidebar-text:          rgba(255, 255, 255, 0.55);
     --sidebar-text-active:   rgba(255, 255, 255, 0.98);
-    --sidebar-hover:         rgba(255, 255, 255, 0.07);
-    --sidebar-shadow:        0 16px 40px rgba(0, 0, 0, 0.55);
+    --sidebar-hover:         rgba(255, 255, 255, 0.10);
+    --sidebar-shadow:        0 16px 40px rgba(0, 0, 0, 0.65);
 
     /* Typography */
     --text-primary:   rgba(255, 255, 255, 0.92);
@@ -139,19 +139,19 @@
     --text-subtle:    rgba(255, 255, 255, 0.22);
 
     /* Brand adjustments */
-    --gold-light:     rgba(244, 180, 0, 0.15);
-    --gold-glow:      rgba(244, 180, 0, 0.30);
-    --green-light:    rgba(8, 127, 69, 0.15);
+    --gold-light:     rgba(0, 122, 255, 0.20);
+    --gold-glow:      rgba(0, 122, 255, 0.40);
+    --green-light:    rgba(52, 199, 89, 0.20);
     --blue-light:     rgba(59, 130, 246, 0.15);
     --red-light:      rgba(239, 68, 68, 0.15);
 
     /* Shadows */
-    --shadow-xs:      0 1px 3px rgba(0, 0, 0, 0.30);
-    --shadow-sm:      0 2px 8px rgba(0, 0, 0, 0.40);
-    --shadow-md:      0 4px 16px rgba(0, 0, 0, 0.50);
-    --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.60);
-    --shadow-xl:      0 16px 48px rgba(0, 0, 0, 0.70);
-    --shadow-glass:   0 2px 12px rgba(0, 0, 0, 0.35);
+    --shadow-xs:      0 1px 3px rgba(0, 0, 0, 0.40);
+    --shadow-sm:      0 2px 8px rgba(0, 0, 0, 0.50);
+    --shadow-md:      0 4px 16px rgba(0, 0, 0, 0.60);
+    --shadow-lg:      0 8px 32px rgba(0, 0, 0, 0.70);
+    --shadow-xl:      0 16px 48px rgba(0, 0, 0, 0.80);
+    --shadow-glass:   0 4px 16px rgba(0, 0, 0, 0.45);
 
     /* Legacy compat */
     --bg-main:          var(--bg-base);
@@ -600,11 +600,119 @@
   .curved-control-panel {
     border-radius: 32px;
     background: var(--sidebar-bg);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+    backdrop-filter: blur(48px);
+    -webkit-backdrop-filter: blur(48px);
     border: 1px solid var(--sidebar-border);
     box-shadow: var(--sidebar-shadow);
     transition: width 350ms cubic-bezier(0.25, 1, 0.35, 1), transform 350ms cubic-bezier(0.25, 1, 0.35, 1), opacity 300ms ease;
+  }
+
+  /* ── 3D Liquid Glass Utilities ──────────────────────────────── */
+  .liquid-glass-icon {
+    position: relative;
+    border-radius: 28px;
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 
+      inset 0 1px 2px rgba(255, 255, 255, 0.95),
+      inset 0 -2px 6px rgba(0, 0, 0, 0.1),
+      0 12px 24px rgba(0, 0, 0, 0.2),
+      0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  }
+  
+  .dark .liquid-glass-icon {
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 
+      inset 0 1px 2px rgba(255, 255, 255, 0.4),
+      inset 0 -2px 8px rgba(0, 0, 0, 0.5),
+      0 16px 32px rgba(0, 0, 0, 0.4),
+      0 6px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .liquid-glass-icon::before {
+    content: '';
+    position: absolute;
+    top: 2px; left: 15%; right: 15%; height: 35%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 100%);
+    border-radius: 50% 50% 20% 20%;
+    filter: blur(0.5px);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .dark .liquid-glass-icon::before {
+    background: linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 100%);
+  }
+
+  .liquid-glass-icon:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 
+      inset 0 1px 2px rgba(255, 255, 255, 0.95),
+      inset 0 -2px 6px rgba(0, 0, 0, 0.1),
+      0 16px 40px rgba(0, 0, 0, 0.25),
+      0 8px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .liquid-glass-icon:hover {
+    box-shadow: 
+      inset 0 1px 2px rgba(255, 255, 255, 0.4),
+      inset 0 -2px 6px rgba(0, 0, 0, 0.5),
+      0 20px 48px rgba(0, 0, 0, 0.6),
+      0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Vibrant internal colors for liquid glass */
+  .bg-vibrant-blue { background: radial-gradient(circle at 30% 30%, #5ac8fa 0%, #007AFF 100%) !important; }
+  .bg-vibrant-red { background: radial-gradient(circle at 30% 30%, #ff0844 0%, #ffb199 100%) !important; }
+  .bg-vibrant-green { background: radial-gradient(circle at 30% 30%, #0ba360 0%, #3cba92 100%) !important; }
+  .bg-vibrant-orange { background: radial-gradient(circle at 30% 30%, #f6d365 0%, #fda085 100%) !important; }
+  .bg-vibrant-purple { background: radial-gradient(circle at 30% 30%, #b06ab3 0%, #4568dc 100%) !important; }
+  .bg-vibrant-teal { background: radial-gradient(circle at 30% 30%, #43e97b 0%, #38f9d7 100%) !important; }
+  .bg-vibrant-multi { background: radial-gradient(circle at top left, #FF0055, #007AFF, #00FF88) !important; }
+
+  /* Inner Glass Symbol (like Apple Maps inner circle) */
+  .inner-glass-symbol {
+    position: relative;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.9),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.15),
+      0 4px 12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .dark .inner-glass-symbol {
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 
+      inset 0 2px 4px rgba(255, 255, 255, 0.3),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.4),
+      0 4px 12px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  /* Giant Liquid Text */
+  .liquid-text {
+    background: linear-gradient(135deg, #007AFF 0%, #34C759 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 4px 12px rgba(0, 122, 255, 0.2));
+  }
+  .dark .liquid-text {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.3) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 8px 24px rgba(0, 122, 255, 0.5));
   }
 
   /* Liquid River Flow Navigation */

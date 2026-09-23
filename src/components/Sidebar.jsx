@@ -253,17 +253,14 @@ function SidebarContent({
       {/* Header — Logo + Hide / Close Controls */}
       <div className="px-5 pt-5 pb-4 flex items-center justify-between border-b border-[var(--sidebar-border)]">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[var(--gold)]/20 border border-[var(--gold)]/40 flex items-center justify-center p-1 shadow-sm">
-            <img
-              src="/logo.png"
-              alt="ALTS"
-              className="w-full h-full object-contain"
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
+          <div className="w-9 h-9 shrink-0 liquid-glass-icon shadow-lg" style={{ background: 'linear-gradient(135deg, #007AFF 0%, #34C759 100%)' }}>
+            <div className="w-[26px] h-[26px] rounded-full inner-glass-symbol flex items-center justify-center">
+              <span className="font-display font-black text-white text-[15px] drop-shadow-md">N</span>
+            </div>
           </div>
           <div>
             <p className="font-display font-black text-[var(--sidebar-text-active)] text-sm leading-none tracking-tight">
-              ALTS
+              NaviGO
             </p>
             <p className="font-mono text-[8.5px] font-semibold leading-tight mt-0.5 text-[var(--sidebar-text)] tracking-wider">
               CAMPUS PLATFORM
@@ -300,15 +297,17 @@ function SidebarContent({
       {/* Role toggle with smooth animated moving slider */}
       <div className="px-4 pt-3.5 pb-2">
         <div
-          className="relative flex p-1 rounded-full border border-[var(--sidebar-border)] bg-[rgba(0,0,0,0.04)] dark:bg-[rgba(255,255,255,0.05)] backdrop-blur-sm shadow-inner"
+          className="relative flex p-1 rounded-full border border-black/10 dark:border-white/10"
+          style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(20px)' }}
         >
           {/* Moving liquid thumb */}
           <div
-            className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-transform duration-300 shadow-sm"
+            className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-transform duration-300"
             style={{
               left: 4,
               transform: role === 'staff' ? 'translateX(100%)' : 'translateX(0)',
-              background: 'linear-gradient(135deg, var(--gold) 0%, #D9A100 100%)',
+              background: 'rgba(255, 255, 255, 0.15)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
               transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
           />
@@ -322,8 +321,9 @@ function SidebarContent({
                 onClick={() => setRole(r)}
                 className="relative z-10 flex-1 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-full transition-colors duration-200 text-center"
                 style={{
-                  color: isCurrent ? '#111' : 'var(--sidebar-text)',
-                  fontWeight: isCurrent ? 700 : 500,
+                  color: isCurrent ? '#FFD60A' : 'rgba(255,255,255,0.7)',
+                  textShadow: isCurrent ? '0 0 8px rgba(255,214,10,0.3)' : 'none',
+                  fontWeight: 700,
                 }}
               >
                 {r}

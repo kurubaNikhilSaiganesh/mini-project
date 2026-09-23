@@ -66,19 +66,19 @@ export default function EventsSection() {
       <MarqueeTicker />
 
       {/* Filters — Curved Pills with Crisp High-Contrast Typography */}
-      <div className="px-4 md:px-8 py-4 border-b border-[var(--glass-border)] flex flex-wrap items-center gap-3 overflow-x-auto scrollbar-hide">
+      <div className="px-4 md:px-8 py-4 border-b border-[var(--glass-border)] flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide overscroll-x-contain snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
         {/* Category filters */}
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex flex-nowrap gap-2 items-center">
           {categories.map((cat) => {
             const isActive = activeCat === cat;
             return (
               <button
                 key={cat}
                 onClick={() => setActiveCat(cat)}
-                className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all duration-200 select-none whitespace-nowrap ${
+                className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
                   isActive
-                    ? 'bg-[var(--gold)] text-[#111111] font-bold shadow-gold scale-[1.03]'
-                    : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-[1.01]'
+                    ? 'bg-[var(--gold)] text-white font-bold shadow-[var(--shadow-gold)] scale-105'
+                    : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
                 }`}
               >
                 {cat}
@@ -97,10 +97,10 @@ export default function EventsSection() {
               <button
                 key={s}
                 onClick={() => setActiveStatus(s)}
-                className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all duration-200 select-none whitespace-nowrap ${
+                className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
                   isActive
-                    ? 'bg-[var(--gold)] text-[#111111] font-bold shadow-gold scale-[1.03]'
-                    : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-[1.01]'
+                    ? 'bg-[var(--gold)] text-white font-bold shadow-[var(--shadow-gold)] scale-105'
+                    : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
                 }`}
               >
                 {s}

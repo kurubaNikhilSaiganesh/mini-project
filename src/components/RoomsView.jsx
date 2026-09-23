@@ -38,23 +38,23 @@ export default function RoomsView() {
 
   return (
     <div className="px-4 md:px-8 py-8 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <p className="font-mono text-[10px] text-[var(--navigo-yellow)] uppercase tracking-widest mb-2">
-          [ROOM_DIRECTORY]
+      {/* Centered Hero Header */}
+      <div className="mb-10 text-center flex flex-col items-center">
+        <p className="font-mono text-[10px] text-[var(--gold)] uppercase tracking-widest mb-3 px-3 py-1 rounded-full bg-[var(--gold)]/10 border border-[var(--gold)]/20 inline-block">
+          Campus Directory
         </p>
-        <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight">
+        <h1 className="font-display text-4xl md:text-6xl font-black uppercase tracking-tight mb-3">
           Rooms.
         </h1>
-        <p className="text-gray-500 text-sm mt-2">
-          {ROOMS.length} rooms across {BUILDINGS_LIST.length} buildings.
+        <p className="text-[var(--text-secondary)] text-sm md:text-base max-w-lg mx-auto">
+          Explore {ROOMS.length} rooms across {BUILDINGS_LIST.length} buildings. Find lecture halls, labs, and seminar spaces.
         </p>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-4">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+      {/* Centered Search */}
+      <div className="relative mb-8 max-w-2xl mx-auto">
+        <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
         </div>
@@ -62,63 +62,64 @@ export default function RoomsView() {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search rooms by number, building, or type..."
-          className="w-full rounded-full glass-input pl-12 pr-4 py-3 text-sm text-[var(--text-primary)] shadow-sm"
+          placeholder="Search by number, building, or type..."
+          className="w-full rounded-full glass-input pl-14 pr-6 py-4 text-sm md:text-base text-[var(--text-primary)] shadow-lg transition-all focus:scale-[1.01]"
         />
       </div>
 
-      {/* Filters */}
-      {/* Filters — Rounded Pills with High Contrast Typography */}
-      <div className="flex flex-wrap gap-2 mb-3 items-center overflow-x-auto scrollbar-hide py-1">
-        <button
-          onClick={() => setActiveBuilding('all')}
-          className={`text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full transition-all select-none whitespace-nowrap ${
-            activeBuilding === 'all'
-              ? 'bg-[var(--gold)] text-[#111111] shadow-gold scale-[1.02]'
-              : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)]'
-          }`}
-        >
-          All Buildings
-        </button>
-        {BUILDINGS_LIST.map((b) => (
+      {/* Centered Filters */}
+      <div className="flex flex-col items-center gap-4 mb-10">
+        <div className="flex flex-nowrap justify-start md:justify-center gap-2 items-center overflow-x-auto scrollbar-hide py-2 px-4 max-w-full w-full snap-x snap-mandatory overscroll-x-contain [-webkit-overflow-scrolling:touch]">
           <button
-            key={b}
-            onClick={() => setActiveBuilding(b)}
-            className={`text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full transition-all select-none whitespace-nowrap ${
-              activeBuilding === b
-                ? 'bg-[var(--gold)] text-[#111111] shadow-gold scale-[1.02]'
-                : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)]'
+            onClick={() => setActiveBuilding('all')}
+            className={`text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
+              activeBuilding === 'all'
+                ? 'bg-[var(--gold)] text-white shadow-[var(--shadow-gold)] scale-105'
+                : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
             }`}
           >
-            {b}
+            All Buildings
           </button>
-        ))}
-      </div>
+          {BUILDINGS_LIST.map((b) => (
+            <button
+              key={b}
+              onClick={() => setActiveBuilding(b)}
+              className={`text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
+                activeBuilding === b
+                  ? 'bg-[var(--gold)] text-white shadow-[var(--shadow-gold)] scale-105'
+                  : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
+              }`}
+            >
+              {b}
+            </button>
+          ))}
+        </div>
 
-      <div className="flex flex-wrap gap-2 mb-8 items-center overflow-x-auto scrollbar-hide py-1">
-        <button
-          onClick={() => setActiveType('all')}
-          className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all select-none whitespace-nowrap ${
-            activeType === 'all'
-              ? 'bg-[var(--gold)] text-[#111111] font-bold shadow-gold scale-[1.02]'
-              : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)]'
-          }`}
-        >
-          All Types
-        </button>
-        {ROOM_TYPES.map((type) => (
+        <div className="flex flex-nowrap justify-start md:justify-center gap-2 items-center overflow-x-auto scrollbar-hide py-2 px-4 max-w-full w-full snap-x snap-mandatory overscroll-x-contain [-webkit-overflow-scrolling:touch]">
           <button
-            key={type}
-            onClick={() => setActiveType(type)}
-            className={`text-xs font-semibold px-3.5 py-1.5 rounded-full transition-all select-none whitespace-nowrap ${
-              activeType === type
-                ? 'bg-[var(--gold)] text-[#111111] font-bold shadow-gold scale-[1.02]'
-                : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)]'
+            onClick={() => setActiveType('all')}
+            className={`text-xs font-semibold px-4 py-2 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
+              activeType === 'all'
+                ? 'bg-[var(--gold)] text-white font-bold shadow-[var(--shadow-gold)] scale-105'
+                : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
             }`}
           >
-            {type}
+            All Types
           </button>
-        ))}
+          {ROOM_TYPES.map((type) => (
+            <button
+              key={type}
+              onClick={() => setActiveType(type)}
+              className={`text-xs font-semibold px-4 py-2 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
+                activeType === type
+                  ? 'bg-[var(--gold)] text-white font-bold shadow-[var(--shadow-gold)] scale-105'
+                  : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
+              }`}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Rooms table */}

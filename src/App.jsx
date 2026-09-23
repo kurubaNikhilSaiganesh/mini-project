@@ -43,9 +43,22 @@ export default function App() {
 
   // Shared data state
   const [events, setEvents] = useState(INITIAL_EVENTS);
+  const [classes, setClasses] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [roomOverrides, setRoomOverrides] = useState({});
   const [timetableOverrides, setTimetableOverrides] = useState({});
+
+  useEffect(() => {
+    fetch('https://localhost:8443/api/events')
+      .then(res => res.json())
+      .then(data => { if (data.length) setEvents(data); })
+      .catch(err => console.error(err));
+
+    fetch('https://localhost:8443/api/classes')
+      .then(res => res.json())
+      .then(data => { if (data.length) setClasses(data); })
+      .catch(err => console.error(err));
+  }, []);
 
   // Handle ALTS custom navigation events (from HeroSection)
   useEffect(() => {
@@ -153,6 +166,7 @@ export default function App() {
     mobileMenuOpen, setMobileMenuOpen,
     // Shared data
     events, setEvents,
+    classes, setClasses,
     announcements, addAnnouncement, removeAnnouncement,
     roomOverrides, applyRoomOverride,
     timetableOverrides, applyTimetableOverride,
@@ -176,7 +190,7 @@ export default function App() {
         />
 
         {/* Main content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden my-3 mr-3 ml-1 lg:ml-3 rounded-3xl border border-[var(--glass-border)] bg-[var(--bg-surface)] shadow-xl relative transition-all duration-300">
 
           {/* Announcement ticker */}
           {announcements.length > 0 && (
@@ -198,7 +212,7 @@ export default function App() {
           <main
             id="main-scroll"
             className="flex-1 overflow-y-auto relative"
-            style={{ background: 'var(--bg-base)', paddingBottom: '80px' }}
+            style={{ paddingBottom: '80px' }}
           >
             <div key={activeView}>
 

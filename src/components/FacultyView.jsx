@@ -64,15 +64,15 @@ export default function FacultyView() {
       </div>
 
       {/* Department filter pills */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide py-2 px-1 max-w-full w-full snap-x snap-mandatory overscroll-x-contain [-webkit-overflow-scrolling:touch]">
         {['all', ...DEPARTMENTS].map((dept) => (
           <button
             key={dept}
             onClick={() => setActiveDept(dept)}
-            className={`text-xs font-bold px-4 py-1.5 rounded-full border transition-all capitalize ${
+            className={`text-xs font-bold px-4 py-1.5 rounded-full border transition-all duration-300 capitalize snap-start ${
               activeDept === dept
-                ? 'bg-violet-500 border-violet-500 text-white shadow-sm scale-[1.02]'
-                : 'glass-1 border-[var(--glass-border)] text-[var(--text-muted)] hover:border-[var(--glass-border-strong)] hover:text-[var(--text-primary)]'
+                ? 'bg-[var(--gold)] border-[var(--gold)] text-white shadow-[var(--shadow-gold)] scale-105'
+                : 'glass-1 border-[var(--glass-border)] text-[var(--text-muted)] hover:border-[var(--glass-border-strong)] hover:text-[var(--text-primary)] hover:scale-105 hover:shadow-lg'
             }`}
           >
             {dept === 'all' ? 'All Departments' : dept}
