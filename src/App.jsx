@@ -1,6 +1,11 @@
-import { useState, useEffect, useCallback, createContext } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { findPath, getBuildingById, calcRouteStats, EVENTS as INITIAL_EVENTS, MARQUEE_ITEMS } from './data';
+import { useTheme } from './hooks/useTheme';
+import { AppContext } from './context/AppContext';
+
 import Sidebar from './components/Sidebar';
+import TopBar from './components/TopBar';
+import MobileNav from './components/MobileNav';
 import DashboardView from './components/DashboardView';
 import DirectoryView from './components/DirectoryView';
 import CampusMap from './components/CampusMap';
@@ -13,13 +18,17 @@ import FacultyView from './components/FacultyView';
 import RoomsView from './components/RoomsView';
 import AdminView from './components/AdminView';
 import RegisterModal from './components/RegisterModal';
-
-export const AppContext = createContext(null);
+import ExamsView from './components/ExamsView';
+import SeatingView from './components/SeatingView';
+import SearchView from './components/SearchView';
+import NoticesView from './components/NoticesView';
+import MarqueeTicker from './components/MarqueeTicker';
 
 export default function App() {
-  const [theme, setTheme] = useState('light');
+  const { theme, toggleTheme } = useTheme();
   const [activeView, setActiveView] = useState('today');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [fromNode, setFromNode] = useState('');
@@ -32,51 +41,42 @@ export default function App() {
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0 });
   const [registerModal, setRegisterModal] = useState(null);
 
-  // Shared data state — admin writes, public pages read
+  // Shared data state
   const [events, setEvents] = useState(INITIAL_EVENTS);
-  const [announcements, setAnnouncements] = useState([]); // { id, text, severity }
-  const [roomOverrides, setRoomOverrides] = useState({}); // { classId: roomId }
-  const [timetableOverrides, setTimetableOverrides] = useState({}); // { slotId: { startTime, endTime, roomId } }
+  const [classes, setClasses] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [roomOverrides, setRoomOverrides] = useState({});
+  const [timetableOverrides, setTimetableOverrides] = useState({});
 
-  const addAnnouncement = useCallback((text, severity = 'ALERT') => {
-    const id = `ann_${Date.now()}`;
-    setAnnouncements((prev) => [{ id, text, severity }, ...prev]);
-    return id;
-  }, []);
-
-  const removeAnnouncement = useCallback((id) => {
-    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
-  }, []);
-
-  const applyRoomOverride = useCallback((classId, newRoomId) => {
-    setRoomOverrides((prev) => ({ ...prev, [classId]: newRoomId }));
-  }, []);
-
-  const applyTimetableOverride = useCallback((slotId, changes) => {
-    setTimetableOverrides((prev) => ({ ...prev, [slotId]: { ...(prev[slotId] || {}), ...changes } }));
-  }, []);
-
-  // Apply theme
   useEffect(() => {
-    const html = document.documentElement;
-    if (theme === 'dark') {
-      html.classList.add('dark');
-    } else {
-      html.classList.remove('dark');
-    }
-  }, [theme]);
+    fetch('https://localhost:8443/api/events')
+      .then(res => res.json())
+      .then(data => { if (data.length) setEvents(data); })
+      .catch(err => console.error(err));
 
-  // Lock scroll when mobile menu open
+    fetch('https://localhost:8443/api/classes')
+      .then(res => res.json())
+      .then(data => { if (data.length) setClasses(data); })
+      .catch(err => console.error(err));
+  }, []);
+
+  // Handle ALTS custom navigation events (from HeroSection)
   useEffect(() => {
-    if (mobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    const handler = (e) => {
+      if (e.detail) navigateTo(e.detail);
+    };
+    window.addEventListener('alts-navigate', handler);
+    return () => window.removeEventListener('alts-navigate', handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Lock body scroll when mobile menu open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileMenuOpen]);
 
-  // Ctrl+K / Cmd+K, Escape
+  // ⌘K / Ctrl+K and Escape
   useEffect(() => {
     const handler = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -93,8 +93,22 @@ export default function App() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    setTheme((t) => (t === 'light' ? 'dark' : 'light'));
+  const addAnnouncement = useCallback((text, severity = 'ALERT') => {
+    const id = `ann_${Date.now()}`;
+    setAnnouncements((prev) => [{ id, text, severity, timestamp: new Date().toISOString() }, ...prev]);
+    return id;
+  }, []);
+
+  const removeAnnouncement = useCallback((id) => {
+    setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+  }, []);
+
+  const applyRoomOverride = useCallback((classId, newRoomId) => {
+    setRoomOverrides((prev) => ({ ...prev, [classId]: newRoomId }));
+  }, []);
+
+  const applyTimetableOverride = useCallback((slotId, changes) => {
+    setTimetableOverrides((prev) => ({ ...prev, [slotId]: { ...(prev[slotId] || {}), ...changes } }));
   }, []);
 
   const calculateRoute = useCallback(() => {
@@ -135,6 +149,8 @@ export default function App() {
 
   const ctx = {
     theme, toggleTheme,
+    activeView, setActiveView: navigateTo,
+    navigateTo,
     selectedBuilding, setSelectedBuilding: selectBuilding,
     fromNode, setFromNode,
     toNode, setToNode,
@@ -147,11 +163,10 @@ export default function App() {
     calculateRoute, clearRoute,
     locateOnMap,
     registerModal, setRegisterModal,
-    navigateTo,
     mobileMenuOpen, setMobileMenuOpen,
-    activeView, setActiveView,
     // Shared data
     events, setEvents,
+    classes, setClasses,
     announcements, addAnnouncement, removeAnnouncement,
     roomOverrides, applyRoomOverride,
     timetableOverrides, applyTimetableOverride,
@@ -160,120 +175,79 @@ export default function App() {
 
   return (
     <AppContext.Provider value={ctx}>
-      <div className="flex h-screen overflow-hidden">
-        {/* Mobile overlay */}
-        {mobileMenuOpen && (
-          <div
-            className="fixed inset-0 z-40 lg:hidden"
-            style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)' }}
-            onClick={() => setMobileMenuOpen(false)}
-          />
-        )}
-
-        {/* Sidebar */}
+      <div
+        className="flex h-screen overflow-hidden"
+        style={{ background: 'var(--bg-base)' }}
+      >
+        {/* Desktop + Mobile Sidebar */}
         <Sidebar
           activeView={activeView}
           setActiveView={navigateTo}
-          theme={theme}
-          toggleTheme={toggleTheme}
           mobileMenuOpen={mobileMenuOpen}
           setMobileMenuOpen={setMobileMenuOpen}
+          collapsed={sidebarCollapsed}
+          setCollapsed={setSidebarCollapsed}
         />
 
-        {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-[var(--bg-main)] relative">
+        {/* Main content */}
+        <div className="flex-1 flex flex-col overflow-hidden my-3 mr-3 ml-1 lg:ml-3 rounded-3xl border border-[var(--glass-border)] bg-[var(--bg-surface)] shadow-xl relative transition-all duration-300">
 
-          {/* Top bar */}
-          <div className="flex items-center justify-between px-4 md:px-8 py-3 border-b-2 border-[var(--border-color)] dark:border-[#2A2A2A] sticky top-0 bg-[var(--bg-main)]/95 backdrop-blur-sm z-20">
-            {/* Hamburger (mobile) */}
-            <button
-              className="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 border-2 border-[#111111] dark:border-white"
-              onClick={() => setMobileMenuOpen(true)}
-              aria-label="Open navigation menu"
-            >
-              <span className="w-5 h-0.5 bg-[#111111] dark:bg-white block" />
-              <span className="w-5 h-0.5 bg-[#111111] dark:bg-white block" />
-              <span className="w-5 h-0.5 bg-[#111111] dark:bg-white block" />
-            </button>
+          {/* Announcement ticker */}
+          {announcements.length > 0 && (
+            <MarqueeTicker items={announcements.map((a) => a.text)} />
+          )}
 
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-xs font-mono text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              <span className="text-[var(--navigo-yellow)] font-bold">NAVIGO</span>
-              <span>/</span>
-              <span>{activeView.replace('_', ' ')}</span>
+          {/* Glass top bar */}
+          <TopBar
+            activeView={activeView}
+            theme={theme}
+            toggleTheme={toggleTheme}
+            onMenuOpen={() => setMobileMenuOpen(true)}
+            setCmdOpen={setCmdOpen}
+            sidebarCollapsed={sidebarCollapsed}
+            setSidebarCollapsed={setSidebarCollapsed}
+          />
+
+          {/* Scrollable view */}
+          <main
+            id="main-scroll"
+            className="flex-1 overflow-y-auto relative"
+            style={{ paddingBottom: '80px' }}
+          >
+            <div key={activeView}>
+
+              {activeView === 'today'     && <DashboardView />}
+              {activeView === 'directory' && <DirectoryView setSelectedBuilding={selectBuilding} />}
+              {activeView === 'events'    && <EventsSection />}
+              {activeView === 'timetable' && <TimetableView />}
+              {activeView === 'classes'   && <ClassesView />}
+              {activeView === 'faculty'   && <FacultyView />}
+              {activeView === 'rooms'     && <RoomsView />}
+              {activeView === 'admin'     && <AdminView />}
+              {activeView === 'exams'     && <ExamsView />}
+              {activeView === 'seating'   && <SeatingView />}
+              {activeView === 'search'    && <SearchView />}
+              {activeView === 'notices'   && <NoticesView />}
+
+              {activeView === 'route' && (
+                <div className="flex flex-col" style={{ minHeight: 'calc(100vh - 120px)' }}>
+                  <div className="px-4 md:px-6 pt-4 pb-3">
+                    <RouteController />
+                  </div>
+                  <div
+                    className="flex-1"
+                    style={{ borderTop: '1px solid var(--glass-border)', minHeight: 400 }}
+                  >
+                    <CampusMap />
+                  </div>
+                </div>
+              )}
             </div>
+          </main>
+        </div>
 
-            {/* Right controls */}
-            <div className="flex items-center gap-2">
-              {/* Search hint */}
-              <button
-                onClick={() => setCmdOpen(true)}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 border-2 border-[#E5E7EB] dark:border-[#2A2A2A] text-xs font-mono text-gray-400 hover:border-[var(--navigo-yellow)] hover:text-[var(--navigo-yellow)] transition-colors"
-                aria-label="Open command palette"
-              >
-                <span>Search</span>
-                <kbd className="text-[10px] border border-current px-1">⌘K</kbd>
-              </button>
-              {/* Theme toggle */}
-              <button
-                onClick={toggleTheme}
-                className="w-9 h-9 flex items-center justify-center border-2 border-[#E5E7EB] dark:border-[#2A2A2A] text-gray-500 dark:text-gray-400 hover:border-[#111111] dark:hover:border-white hover:text-[#111111] dark:hover:text-white transition-colors"
-                aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-              >
-                {theme === 'dark' ? (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Dynamic Views */}
-          <div key={activeView} className="page-enter">
-            {activeView === 'today'     && <DashboardView />}
-            {activeView === 'directory' && <DirectoryView setSelectedBuilding={selectBuilding} />}
-            {activeView === 'events'    && <EventsSection />}
-            {activeView === 'timetable' && <TimetableView />}
-            {activeView === 'classes'   && <ClassesView />}
-            {activeView === 'faculty'   && <FacultyView />}
-            {activeView === 'rooms'     && <RoomsView />}
-            {activeView === 'admin'     && <AdminView />}
-
-            {activeView === 'route' && (
-              <div className="flex flex-col h-[calc(100vh-57px)]">
-                <div className="px-4 md:px-6 pt-4 pb-3">
-                  <RouteController />
-                </div>
-                <div className="flex-1 border-t-2 border-[#111111] dark:border-[#333333] overflow-hidden">
-                  <CampusMap />
-                </div>
-              </div>
-            )}
-
-            {/* Placeholder views */}
-            {['complaints', 'firstaid', 'examhalls'].includes(activeView) && (
-              <div className="flex items-center justify-center h-[60vh]">
-                <div className="text-center border-2 border-[#111111] dark:border-white p-12 max-w-sm mx-auto">
-                  <p className="font-mono text-xs uppercase tracking-widest mb-2 text-[var(--navigo-yellow)]">
-                    [MODULE STATUS]
-                  </p>
-                  <h2 className="font-display text-2xl uppercase font-bold mb-4">
-                    {activeView === 'complaints' ? 'Complaints' :
-                     activeView === 'firstaid'   ? 'First Aid'  : 'Exam Halls'}
-                  </h2>
-                  <p className="font-mono text-xs text-gray-500 uppercase tracking-wider">
-                    DATA NOT AVAILABLE
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </main>
+        {/* Mobile bottom nav */}
+        <MobileNav />
 
         {/* Command Palette */}
         {cmdOpen && <CommandPalette />}

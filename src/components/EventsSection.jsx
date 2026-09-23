@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { AppContext } from '../App';
+import { AppContext } from '../context/AppContext';
 import MarqueeTicker from './MarqueeTicker';
 import EventCard from './EventCard';
 
@@ -65,42 +65,48 @@ export default function EventsSection() {
       {/* Marquee Ticker */}
       <MarqueeTicker />
 
-      {/* Filters */}
-      <div className="px-4 md:px-8 py-4 border-b-2 border-[#111111] dark:border-[#333333] flex flex-wrap gap-3">
+      {/* Filters — Curved Pills with Crisp High-Contrast Typography */}
+      <div className="px-4 md:px-8 py-4 border-b border-[var(--glass-border)] flex flex-nowrap items-center gap-3 overflow-x-auto scrollbar-hide overscroll-x-contain snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
         {/* Category filters */}
-        <div className="flex flex-wrap gap-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCat(cat)}
-              className={`font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 border-2 transition-all ${
-                activeCat === cat
-                  ? 'border-[#111111] bg-[var(--navigo-yellow)] text-[#111111]'
-                  : 'border-[#E5E7EB] dark:border-[#2A2A2A] text-gray-500 hover:border-[#111111] dark:hover:border-white'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="flex flex-nowrap gap-2 items-center">
+          {categories.map((cat) => {
+            const isActive = activeCat === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setActiveCat(cat)}
+                className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
+                  isActive
+                    ? 'bg-[var(--gold)] text-white font-bold shadow-[var(--shadow-gold)] scale-105'
+                    : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
+                }`}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="w-px bg-[#E5E7EB] dark:bg-[#2A2A2A] hidden sm:block" />
+        <div className="w-px h-6 bg-[var(--glass-border)] hidden sm:block" />
 
         {/* Status filters */}
-        <div className="flex gap-2">
-          {STATUSES.map((s) => (
-            <button
-              key={s}
-              onClick={() => setActiveStatus(s)}
-              className={`font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 border-2 transition-all ${
-                activeStatus === s
-                  ? 'border-[#111111] bg-[#111111] text-white'
-                  : 'border-[#E5E7EB] dark:border-[#2A2A2A] text-gray-500 hover:border-[#111111] dark:hover:border-white'
-              }`}
-            >
-              {s}
-            </button>
-          ))}
+        <div className="flex gap-2 items-center">
+          {STATUSES.map((s) => {
+            const isActive = activeStatus === s;
+            return (
+              <button
+                key={s}
+                onClick={() => setActiveStatus(s)}
+                className={`font-mono text-[11px] uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
+                  isActive
+                    ? 'bg-[var(--gold)] text-white font-bold shadow-[var(--shadow-gold)] scale-105'
+                    : 'glass-btn glass-btn-ghost rounded-full text-[var(--text-primary)] hover:bg-[var(--glass-2)] hover:scale-105 hover:shadow-lg'
+                }`}
+              >
+                {s}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -139,3 +145,4 @@ export default function EventsSection() {
     </div>
   );
 }
+

@@ -1,6 +1,6 @@
 import { useContext, useState, useCallback, useRef } from 'react';
-import { ZoomIn, ZoomOut, Maximize } from 'lucide-react';
-import { AppContext } from '../App';
+import { ZoomIn, ZoomOut, Maximize, X } from 'lucide-react';
+import { AppContext } from '../context/AppContext';
 import { BUILDINGS, GRAPH, getBuildingById } from '../data';
 
 const SVG_W = 800;
@@ -44,78 +44,90 @@ function BuildingPopup({ building, onClose, onSetFrom, onSetTo, onFindRoute }) {
 
   return (
     <div
-      className="bg-white dark:bg-[#1A1A1A] border-2 border-[#111111] dark:border-white p-5 z-50"
-      style={{ minWidth: 240, maxWidth: 300, boxShadow: '5px 5px 0 #111111' }}
+      className="glass-modal rounded-3xl p-6 z-50 border border-white/20 shadow-2xl relative overflow-hidden backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200"
+      style={{ minWidth: 260, maxWidth: 320 }}
       role="dialog"
       aria-label={`${building.label} details`}
     >
+      {/* Top accent glow */}
+      <div
+        className="absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-20 blur-xl pointer-events-none"
+        style={{ background: accentColor }}
+      />
+
       {/* Header */}
-      <div className="flex items-start justify-between gap-2 mb-3">
+      <div className="flex items-start justify-between gap-2 mb-3 relative z-10">
         <div>
-          <span className="font-mono text-[9px] font-bold uppercase tracking-widest mb-0.5 block" style={{ color: accentColor }}>
-            [{building.type.toUpperCase()}] {building.code}
+          <span
+            className="font-mono text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 rounded-full inline-block mb-1 glass-1 border border-[var(--glass-border)]"
+            style={{ color: accentColor }}
+          >
+            {building.type.toUpperCase()} · {building.code}
           </span>
-          <h3 className="font-bold text-base leading-tight">{building.label}</h3>
+          <h3 className="font-display font-bold text-lg leading-tight text-[var(--text-primary)]">
+            {building.label}
+          </h3>
         </div>
         <button
           onClick={onClose}
-          className="w-7 h-7 border-2 border-[#E5E7EB] dark:border-[#333333] flex items-center justify-center text-gray-400 hover:border-[#111111] hover:text-[#111111] dark:hover:border-white dark:hover:text-white transition-colors shrink-0"
+          className="glass-btn glass-btn-ghost glass-btn-icon w-7 h-7 rounded-full text-xs text-[var(--text-muted)] hover:text-[var(--text-primary)]"
           aria-label="Close popup"
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
+          <X size={14} />
         </button>
       </div>
 
       {/* Department */}
-      <p className="font-mono text-[9px] font-bold uppercase tracking-widest mb-2" style={{ color: accentColor }}>
+      <p className="font-mono text-[10px] font-semibold uppercase tracking-wider mb-2 text-amber-500">
         {building.department}
       </p>
 
       {/* Description */}
-      <p className="text-xs text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">{building.description}</p>
+      <p className="text-xs text-[var(--text-secondary)] mb-4 leading-relaxed">
+        {building.description}
+      </p>
 
       {/* Facilities */}
-      <div className="mb-4 space-y-1">
+      <div className="mb-4 space-y-1.5">
         {building.facilities.slice(0, 3).map((f) => (
-          <div key={f} className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-            <span className="w-1 h-1 shrink-0" style={{ background: accentColor }} />
-            {f}
+          <div key={f} className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: accentColor }} />
+            <span>{f}</span>
           </div>
         ))}
       </div>
 
       {/* Accessibility badge */}
-      <div className="mb-4">
-        <span className={`font-mono text-[9px] font-bold px-2 py-0.5 ${
-          building.accessible
-            ? 'bg-[var(--navigo-green)]/20 text-[var(--navigo-green)] border border-[var(--navigo-green)]'
-            : 'bg-gray-100 dark:bg-[#2A2A2A] text-gray-400 border border-[#E5E7EB] dark:border-[#333333]'
-        }`}>
-          {building.accessible ? '♿ ACCESSIBLE' : '⚠ LIMITED ACCESS'}
+      <div className="mb-5">
+        <span
+          className={`font-mono text-[9px] font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5 ${
+            building.accessible
+              ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30'
+              : 'bg-black/5 dark:bg-white/5 text-[var(--text-muted)] border border-[var(--glass-border)]'
+          }`}
+        >
+          {building.accessible ? '♿ FULLY ACCESSIBLE' : '⚠ LIMITED ACCESS'}
         </span>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-2 mb-2">
+      <div className="flex gap-2 mb-2 relative z-10">
         <button
           onClick={() => onSetFrom(building.id)}
-          className="flex-1 font-mono text-[10px] font-bold uppercase py-2 border-2 border-[#111111] dark:border-white hover:bg-[#111111] hover:text-white dark:hover:bg-white dark:hover:text-[#111111] transition-colors"
+          className="flex-1 glass-btn rounded-full text-xs font-semibold py-2"
         >
           Set From
         </button>
         <button
           onClick={() => onSetTo(building.id)}
-          className="flex-1 font-mono text-[10px] font-bold uppercase py-2 text-white border-2 border-[var(--navigo-yellow)]"
-          style={{ background: 'var(--navigo-yellow)', color: '#111111' }}
+          className="flex-1 glass-btn glass-btn-primary rounded-full text-xs font-bold py-2 shadow-xs"
         >
           Set To
         </button>
       </div>
       <button
         onClick={() => onFindRoute(building.id)}
-        className="w-full btn-green text-xs py-2"
+        className="w-full glass-btn btn-green rounded-full text-xs py-2.5 font-bold shadow-md"
       >
         Find Route →
       </button>
@@ -126,17 +138,17 @@ function BuildingPopup({ building, onClose, onSetFrom, onSetTo, onFindRoute }) {
 // ─── ZoneFilterBar ────────────────────────────────────────────
 function ZoneFilterBar({ activeFilter, setFilter }) {
   return (
-    <div className="flex flex-wrap gap-2 px-4 py-3 border-b-2 border-[#111111] dark:border-[#333333] bg-white dark:bg-[#0A0A0A]">
+    <div className="flex items-center gap-2 px-4 py-3 overflow-x-auto scrollbar-hide border-b border-[var(--glass-border)] glass-1">
       {ZONE_FILTERS.map((f) => {
         const isActive = activeFilter === f.key;
         return (
           <button
             key={f.key}
             onClick={() => setFilter(f.key)}
-            className={`font-mono text-[10px] font-bold px-3 py-1.5 border-2 transition-all uppercase tracking-wider ${
+            className={`font-mono text-[10px] font-bold px-4 py-1.5 rounded-full transition-all uppercase tracking-wider shrink-0 select-none ${
               isActive
-                ? 'border-[#111111] bg-[var(--navigo-yellow)] text-[#111111]'
-                : 'border-[#E5E7EB] dark:border-[#2A2A2A] text-gray-500 hover:border-[#111111] dark:hover:border-white'
+                ? 'bg-amber-400 text-black shadow-sm font-bold scale-[1.02]'
+                : 'glass-1 border border-[var(--glass-border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--glass-border-strong)]'
             }`}
           >
             {f.label}
@@ -539,12 +551,12 @@ export default function CampusMap() {
 
         {/* Map Controls (bottom-right) */}
         <div
-          className="absolute bottom-4 right-4 flex flex-col border-2 border-[#111111] dark:border-[#333333] overflow-hidden bg-white dark:bg-[#1A1A1A]"
-          style={{ zIndex: 30, boxShadow: '3px 3px 0 #111111' }}
+          className="absolute bottom-5 right-5 flex flex-col gap-1.5 glass-2 rounded-2xl p-1.5 border border-[var(--glass-border-strong)] shadow-lg backdrop-blur-md"
+          style={{ zIndex: 30 }}
         >
           <button
             onClick={() => zoom(0.75)}
-            className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-[var(--navigo-yellow)] hover:text-[#111111] transition-colors border-b-2 border-[#111111] dark:border-[#333333]"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-secondary)] hover:bg-amber-400 hover:text-black transition-colors"
             aria-label="Zoom in"
             title="Zoom In"
           >
@@ -552,7 +564,7 @@ export default function CampusMap() {
           </button>
           <button
             onClick={() => zoom(1.33)}
-            className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-[var(--navigo-yellow)] hover:text-[#111111] transition-colors border-b-2 border-[#111111] dark:border-[#333333]"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-secondary)] hover:bg-amber-400 hover:text-black transition-colors"
             aria-label="Zoom out"
             title="Zoom Out"
           >
@@ -560,7 +572,7 @@ export default function CampusMap() {
           </button>
           <button
             onClick={resetView}
-            className="w-10 h-10 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:bg-[var(--navigo-yellow)] hover:text-[#111111] transition-colors"
+            className="w-9 h-9 rounded-xl flex items-center justify-center text-[var(--text-secondary)] hover:bg-amber-400 hover:text-black transition-colors"
             aria-label="Reset map view"
             title="Reset View"
           >
@@ -570,12 +582,13 @@ export default function CampusMap() {
 
         {/* Coordinate readout */}
         <div
-          className="absolute bottom-4 left-4 font-mono text-[9px] uppercase tracking-wider"
-          style={{ zIndex: 30, color: 'var(--navigo-yellow)', opacity: 0.8 }}
+          className="absolute bottom-5 left-5 font-mono text-[9px] uppercase tracking-wider glass-1 rounded-full px-3 py-1 border border-[var(--glass-border)] shadow-xs"
+          style={{ zIndex: 30, color: 'var(--gold)' }}
         >
-          VIEW [{Math.round(viewBox.x)}, {Math.round(viewBox.y)}] // {(SVG_W / viewBox.w).toFixed(1)}×
+          VIEW [{Math.round(viewBox.x)}, {Math.round(viewBox.y)}] · {(SVG_W / viewBox.w).toFixed(1)}×
         </div>
       </div>
     </div>
   );
 }
+

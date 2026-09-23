@@ -1,0 +1,224 @@
+{
+  "events": [
+    {
+      "id": "techfest",
+      "title": "TECHFEST 2026",
+      "category": "TECH_FEST",
+      "date": "2026.10.15",
+      "time": "09:00 AM",
+      "venue": "auditorium",
+      "venueName": "AUDITORIUM",
+      "description": "Annual inter-college tech festival with competitions, exhibits, and industry talks.",
+      "organizer": "CS Department",
+      "status": "UPCOMING",
+      "span": "large"
+    },
+    {
+      "id": "hackathon",
+      "title": "24H HACKATHON",
+      "category": "HACKATHON",
+      "date": "2026.10.18",
+      "time": "10:00 AM",
+      "venue": "tech_labs",
+      "venueName": "TECH LABS",
+      "description": "Build real-world solutions in 24 hours. Teams of 3–5. Prize pool: ₹50,000.",
+      "organizer": "Innovation Cell",
+      "status": "UPCOMING",
+      "span": "medium"
+    },
+    {
+      "id": "guest_lecture",
+      "title": "GUEST LECTURE: AI & SOCIETY",
+      "category": "LECTURE",
+      "date": "2026.09.05",
+      "time": "11:00 AM",
+      "venue": "auditorium",
+      "venueName": "AUDITORIUM",
+      "description": "Distinguished lecture by Dr. Priya Anand on ethical AI, automation, and the future of work.",
+      "organizer": "Dean's Office",
+      "status": "COMPLETED",
+      "span": "small"
+    },
+    {
+      "id": "cultural_fest",
+      "title": "CULTURALIA 2026",
+      "category": "CULTURAL_FEST",
+      "date": "2026.11.20",
+      "time": "05:00 PM",
+      "venue": "auditorium",
+      "venueName": "AUDITORIUM",
+      "description": "3-day cultural extravaganza with music, dance, drama, and fashion competitions.",
+      "organizer": "Student Council",
+      "status": "UPCOMING",
+      "span": "medium"
+    },
+    {
+      "id": "workshop",
+      "title": "REACT & NEXT.JS WORKSHOP",
+      "category": "WORKSHOP",
+      "date": "2026.09.12",
+      "time": "10:00 AM",
+      "venue": "tech_labs",
+      "venueName": "TECH LABS",
+      "description": "Hands-on workshop on modern full-stack development. Limited seats — 40 participants.",
+      "organizer": "Web Dev Club",
+      "status": "UPCOMING",
+      "span": "small"
+    },
+    {
+      "id": "sports_meet",
+      "title": "INTER-DEPT SPORTS MEET",
+      "category": "SPORTS",
+      "date": "2026.10.01",
+      "time": "08:00 AM",
+      "venue": "sports",
+      "venueName": "SPORTS COMPLEX",
+      "description": "Annual sports day with track events, team sports, and aquatics. All departments compete.",
+      "organizer": "Sports Committee",
+      "status": "UPCOMING",
+      "span": "small"
+    },
+    {
+      "id": "robotics",
+      "title": "ROBOTICS CHALLENGE",
+      "category": "COMPETITION",
+      "date": "2026.10.22",
+      "time": "10:00 AM",
+      "venue": "tech_labs",
+      "venueName": "TECH LABS",
+      "description": "Design, build, and program robots to complete obstacle courses. Open to all years.",
+      "organizer": "Robotics Club",
+      "status": "UPCOMING",
+      "span": "small"
+    }
+  ],
+  "classes": [
+    {
+      "id": "cs_2a",
+      "name": "2nd Year CSE — Section A",
+      "shortName": "CS-2A",
+      "year": 2,
+      "department": "Computer Science Engineering",
+      "section": "A",
+      "strength": 62,
+      "facultyIds": [
+        "fac_002"
+      ],
+      "roomId": "room_a101",
+      "description": "Second year Computer Science Engineering students, Section A. Focus on core CS fundamentals."
+    },
+    {
+      "id": "cs_3a",
+      "name": "3rd Year CSE — Section A",
+      "shortName": "CS-3A",
+      "year": 3,
+      "department": "Computer Science Engineering",
+      "section": "A",
+      "strength": 58,
+      "facultyIds": [
+        "fac_001",
+        "fac_004"
+      ],
+      "roomId": "room_a301",
+      "description": "Third year Computer Science Engineering students, Section A. Advanced algorithms and AI specialization."
+    },
+    {
+      "id": "cs_3b",
+      "name": "3rd Year CSE — Section B",
+      "shortName": "CS-3B",
+      "year": 3,
+      "department": "Computer Science Engineering",
+      "section": "B",
+      "strength": 60,
+      "facultyIds": [
+        "fac_001"
+      ],
+      "roomId": "room_a302",
+      "description": "Third year Computer Science Engineering students, Section B."
+    },
+    {
+      "id": "cs_4a",
+      "name": "4th Year CSE — Section A",
+      "shortName": "CS-4A",
+      "year": 4,
+      "department": "Computer Science Engineering",
+      "section": "A",
+      "strength": 55,
+      "facultyIds": [
+        "fac_004"
+      ],
+      "roomId": "room_a401",
+      "description": "Final year CSE students working on AI/ML specialization and capstone projects."
+    },
+    {
+      "id": "it_2b",
+      "name": "2nd Year IT — Section B",
+      "shortName": "IT-2B",
+      "year": 2,
+      "department": "Information Technology",
+      "section": "B",
+      "strength": 60,
+      "facultyIds": [
+        "fac_003"
+      ],
+      "roomId": "room_a102",
+      "description": "Second year IT students, Section B. Focus on web technologies and databases."
+    },
+    {
+      "id": "it_3a",
+      "name": "3rd Year IT — Section A",
+      "shortName": "IT-3A",
+      "year": 3,
+      "department": "Information Technology",
+      "section": "A",
+      "strength": 56,
+      "facultyIds": [
+        "fac_007"
+      ],
+      "roomId": "room_tl_ai",
+      "description": "Third year IT students specializing in cloud computing and cybersecurity."
+    },
+    {
+      "id": "me_2a",
+      "name": "2nd Year MECH — Section A",
+      "shortName": "ME-2A",
+      "year": 2,
+      "department": "Mechanical Engineering",
+      "section": "A",
+      "strength": 65,
+      "facultyIds": [
+        "fac_005"
+      ],
+      "roomId": "room_b101",
+      "description": "Second year Mechanical Engineering students. Core thermodynamics and fluid mechanics."
+    },
+    {
+      "id": "ce_3a",
+      "name": "3rd Year CIVIL — Section A",
+      "shortName": "CE-3A",
+      "year": 3,
+      "department": "Civil Engineering",
+      "section": "A",
+      "strength": 52,
+      "facultyIds": [
+        "fac_006"
+      ],
+      "roomId": "room_b201",
+      "description": "Third year Civil Engineering students focusing on structural analysis."
+    },
+    {
+      "id": "mba_1a",
+      "name": "1st Year MBA — Section A",
+      "shortName": "MBA-1A",
+      "year": 1,
+      "department": "MBA",
+      "section": "A",
+      "strength": 45,
+      "facultyIds": [
+        "fac_008"
+      ],
+      "roomId": "room_c101",
+      "description": "First year MBA students. Strategic management and business analytics foundations."
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { CLASSES, TIMETABLE, DAYS, getCurrentDay, getTimetableForDay } from '../data';
-import { AppContext } from '../App';
+import { AppContext } from '../context/AppContext';
+import { Clock, MapPin, CheckCircle2, Circle, ChevronDown } from 'lucide-react';
 
 function getCurrentTime() {
   const now = new Date();
@@ -25,7 +26,7 @@ export default function TimetableView() {
   const selectedClass = CLASSES.find((c) => c.id === selectedClassId);
 
   const todaySlots = getTimetableForDay(selectedClassId, today);
-  const allSlots   = TIMETABLE.filter((t) => t.classId === selectedClassId)
+  const allSlots = TIMETABLE.filter((t) => t.classId === selectedClassId)
     .sort((a, b) => {
       const dayOrder = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
       if (dayOrder.indexOf(a.day) !== dayOrder.indexOf(b.day)) {
@@ -47,106 +48,99 @@ export default function TimetableView() {
   };
 
   return (
-    <div className="px-4 md:px-8 py-8 max-w-5xl mx-auto">
+    <div className="px-4 md:px-8 py-8 max-w-5xl mx-auto page-enter space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <p className="font-mono text-[10px] text-[var(--navigo-yellow)] uppercase tracking-widest mb-2">
-          [TIMETABLE_SYS]
-        </p>
-        <h1 className="font-display text-4xl md:text-5xl font-bold uppercase tracking-tight mb-2">
-          Timetable.
-        </h1>
-        <p className="text-gray-500 text-sm">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-          <span className="font-mono ml-2 text-xs text-[var(--navigo-yellow)]">
-            [TODAY: {today}]
+      <div>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-1 border border-[var(--glass-border)] mb-2">
+          <span className="w-2 h-2 rounded-full bg-amber-400" />
+          <span className="font-mono text-[10px] text-amber-500 uppercase tracking-widest font-bold">
+            Timetable System
           </span>
+        </div>
+        <h1 className="font-display text-4xl md:text-5xl font-black uppercase tracking-tight text-[var(--text-primary)]">
+          Schedule.
+        </h1>
+        <p className="text-[var(--text-secondary)] mt-1 text-sm">
+          {new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+          <span className="font-mono ml-2 text-xs text-amber-500">· Today: {today}</span>
         </p>
       </div>
 
       {/* Controls row */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-8">
+      <div className="flex flex-col sm:flex-row gap-3">
         {/* Class selector */}
         <div className="flex-1">
-          <label className="font-mono text-[10px] text-gray-500 uppercase tracking-widest block mb-1.5">
+          <label className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest block mb-1.5 font-semibold">
             Select Class
           </label>
           <div className="relative">
             <select
               value={selectedClassId}
               onChange={(e) => setSelectedClassId(e.target.value)}
-              className="w-full appearance-none border-2 border-[#111111] dark:border-[#333333] bg-white dark:bg-[#141414] text-[#111111] dark:text-white px-4 py-3 pr-10 font-medium text-sm focus:outline-none focus:border-[var(--navigo-yellow)] transition-colors cursor-pointer"
+              className="glass-select rounded-full py-3 pr-10 pl-5 text-sm font-semibold appearance-none cursor-pointer w-full shadow-xs"
             >
               {CLASSES.map((c) => (
-                <option key={c.id} value={c.id}>{c.name} — {c.shortName}</option>
+                <option key={c.id} value={c.id} className="dark:bg-[#141414]">
+                  {c.name} — {c.shortName}
+                </option>
               ))}
             </select>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 9l6 6 6-6"/>
-              </svg>
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)]">
+              <ChevronDown size={14} strokeWidth={2.5} />
             </div>
           </div>
         </div>
 
-        {/* View tabs */}
-        <div className="flex border-2 border-[#111111] dark:border-[#333333] self-end h-[50px]">
-          <button
-            onClick={() => setViewMode('today')}
-            className={`px-6 text-sm font-bold uppercase tracking-wider transition-colors ${
-              viewMode === 'today'
-                ? 'bg-[var(--navigo-yellow)] text-[#111111]'
-                : 'bg-transparent text-gray-500 hover:text-[#111111] dark:hover:text-white'
-            }`}
+        {/* View mode pills */}
+        <div className="flex self-end">
+          <div
+            className="flex p-1 rounded-full glass-1 border border-[var(--glass-border)] gap-1"
           >
-            Today
-          </button>
-          <button
-            onClick={() => setViewMode('week')}
-            className={`px-6 text-sm font-bold uppercase tracking-wider border-l-2 border-[#111111] dark:border-[#333333] transition-colors ${
-              viewMode === 'week'
-                ? 'bg-[var(--navigo-yellow)] text-[#111111]'
-                : 'bg-transparent text-gray-500 hover:text-[#111111] dark:hover:text-white'
-            }`}
-          >
-            This Week
-          </button>
+            {['today', 'week'].map((mode) => (
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all capitalize ${
+                  viewMode === mode
+                    ? 'bg-[var(--gold)] text-white shadow-sm scale-[1.02]'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                {mode === 'today' ? 'Today' : 'This Week'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Class info strip */}
       {selectedClass && (
-        <div className="border-2 border-[#111111] dark:border-[#333333] p-4 mb-6 flex flex-wrap gap-6 bg-[var(--navigo-yellow)]/10">
-          <div>
-            <p className="font-mono text-[9px] text-gray-500 uppercase tracking-wider">Class</p>
-            <p className="font-bold text-sm">{selectedClass.name}</p>
-          </div>
-          <div>
-            <p className="font-mono text-[9px] text-gray-500 uppercase tracking-wider">Department</p>
-            <p className="font-bold text-sm">{selectedClass.department}</p>
-          </div>
-          <div>
-            <p className="font-mono text-[9px] text-gray-500 uppercase tracking-wider">Strength</p>
-            <p className="font-bold text-sm">{selectedClass.strength} students</p>
-          </div>
-          <div>
-            <p className="font-mono text-[9px] text-gray-500 uppercase tracking-wider">Year / Section</p>
-            <p className="font-bold text-sm">Year {selectedClass.year} — Section {selectedClass.section}</p>
-          </div>
+        <div className="glass-card rounded-3xl p-5 border border-[var(--glass-border)] flex flex-wrap gap-6">
+          {[
+            { label: 'Class', value: selectedClass.name },
+            { label: 'Department', value: selectedClass.department },
+            { label: 'Strength', value: `${selectedClass.strength} students` },
+            { label: 'Year / Section', value: `Year ${selectedClass.year} — Section ${selectedClass.section}` },
+          ].map((item) => (
+            <div key={item.label}>
+              <p className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-wider mb-0.5">{item.label}</p>
+              <p className="font-semibold text-sm text-[var(--text-primary)]">{item.value}</p>
+            </div>
+          ))}
         </div>
       )}
 
       {/* TODAY VIEW */}
       {viewMode === 'today' && (
-        <div>
-          <h2 className="font-mono text-xs uppercase tracking-widest text-gray-500 mb-4">
-            {today === 'SUN' || today === 'SAT' ? 'No classes this day' : `Schedule for ${today}`}
+        <div className="space-y-3">
+          <h2 className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-muted)] font-semibold px-1">
+            {today === 'SUN' || today === 'SAT' ? 'Weekend — No classes' : `Periods for ${today}`}
           </h2>
 
           {todaySlots.length === 0 ? (
-            <div className="border-2 border-dashed border-[#E5E7EB] dark:border-[#2A2A2A] p-12 text-center">
-              <p className="font-mono text-xs uppercase tracking-widest text-gray-400">
-                — NO CLASSES SCHEDULED —
+            <div className="glass-card rounded-3xl p-12 text-center border border-dashed border-[var(--glass-border-strong)]">
+              <p className="font-mono text-xs uppercase tracking-wider text-[var(--text-muted)]">
+                No classes scheduled today
               </p>
             </div>
           ) : (
@@ -154,59 +148,71 @@ export default function TimetableView() {
               {todaySlots.map((slot) => {
                 const status = statusOf(slot);
                 const isCurrent = status === 'current';
-                const isDone = status === 'done';
+                const isDone    = status === 'done';
 
                 return (
                   <div
                     key={slot.id}
-                    className={`border-2 p-5 flex flex-col sm:flex-row sm:items-center gap-4 transition-all ${
+                    className={`glass-card rounded-3xl p-5 flex flex-col sm:flex-row sm:items-center gap-4 border transition-all ${
                       isCurrent
-                        ? 'border-[var(--navigo-green)] bg-[var(--navigo-green)]/5'
+                        ? 'border-emerald-500/40 bg-emerald-500/5 shadow-md'
                         : isDone
-                          ? 'border-[#E5E7EB] dark:border-[#2A2A2A] opacity-50'
-                          : 'border-[#111111] dark:border-[#333333] hover:shadow-brutal'
+                          ? 'border-[var(--glass-border)] opacity-45'
+                          : 'border-[var(--glass-border)] hover:border-[var(--glass-border-strong)] hover:shadow-md'
                     }`}
                   >
-                    {/* Time */}
-                    <div className="shrink-0 text-center sm:text-left min-w-[80px]">
-                      <p className="font-mono text-lg font-bold text-[#111111] dark:text-white leading-tight">
-                        {slot.startTime}
-                      </p>
-                      <p className="font-mono text-xs text-gray-400">–{slot.endTime}</p>
-                    </div>
-
-                    {/* Divider */}
-                    <div className={`w-full sm:w-0.5 h-0.5 sm:h-12 ${isCurrent ? 'bg-[var(--navigo-green)]' : 'bg-[#E5E7EB] dark:bg-[#2A2A2A]'} sm:block`} />
-
-                    {/* Content */}
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="font-bold text-base leading-tight">{slot.subject}</h3>
-                          <p className="text-xs text-gray-500 font-mono mt-0.5">
-                            ROOM: {slot.roomId?.replace('room_', '').toUpperCase()}
-                          </p>
-                        </div>
-                        {isCurrent && (
-                          <span className="shrink-0 text-[9px] font-mono font-bold uppercase px-2 py-1 bg-[var(--navigo-green)] text-white">
-                            NOW
-                          </span>
+                    {/* Time column */}
+                    <div className="shrink-0 text-center sm:text-left min-w-[90px]">
+                      <div className="flex sm:flex-col items-center sm:items-start gap-2">
+                        {isCurrent ? (
+                          <CheckCircle2 size={16} className="text-emerald-500 shrink-0" />
+                        ) : isDone ? (
+                          <Circle size={16} className="text-[var(--text-subtle)] shrink-0" />
+                        ) : (
+                          <Clock size={16} className="text-amber-400 shrink-0" />
                         )}
+                        <div>
+                          <p className="font-mono text-xl font-extrabold text-[var(--text-primary)] leading-none">
+                            {slot.startTime}
+                          </p>
+                          <p className="font-mono text-xs text-[var(--text-muted)]">–{slot.endTime}</p>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Action */}
-                    {!isDone && (
-                      <button
-                        onClick={() => {
-                          locateOnMap(selectedClass.facultyIds?.[0] ? 'academic_a' : 'academic_a');
-                        }}
-                        className="shrink-0 btn-secondary text-xs px-4 py-2"
-                        title="Locate room on map"
-                      >
-                        Locate →
-                      </button>
-                    )}
+                    {/* Divider */}
+                    <div
+                      className={`w-full sm:w-px h-px sm:h-10 ${isCurrent ? 'bg-emerald-500/40' : 'bg-[var(--glass-border)]'}`}
+                    />
+
+                    {/* Content */}
+                    <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <h3 className="font-display font-bold text-lg leading-tight text-[var(--text-primary)]">
+                          {slot.subject}
+                        </h3>
+                        <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">
+                          ROOM: {slot.roomId?.replace('room_', '').toUpperCase()}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {isCurrent && (
+                          <span className="text-[10px] font-mono font-bold uppercase px-3 py-1 rounded-full bg-emerald-500 text-white shadow-sm">
+                            ● NOW
+                          </span>
+                        )}
+                        {!isDone && (
+                          <button
+                            onClick={() => locateOnMap('academic_a')}
+                            className="glass-btn glass-btn-sm rounded-full text-xs flex items-center gap-1.5 shrink-0"
+                          >
+                            <MapPin size={12} />
+                            <span>Locate</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -217,48 +223,58 @@ export default function TimetableView() {
 
       {/* WEEK VIEW */}
       {viewMode === 'week' && (
-        <div className="overflow-x-auto -mx-4 md:-mx-8 px-4 md:px-8">
-          <div className="min-w-[640px]">
-            <div className="grid grid-cols-6 gap-px bg-[#111111] dark:bg-[#333333] border-2 border-[#111111] dark:border-[#333333]">
-              {DAYS.map((day) => (
-                <div key={day} className={`bg-[var(--bg-main)]`}>
+        <div className="overflow-x-auto -mx-4 md:-mx-0 pb-4">
+          <div className="min-w-[640px] grid grid-cols-6 gap-3">
+            {DAYS.map((day) => {
+              const isToday = day === today;
+              return (
+                <div
+                  key={day}
+                  className={`glass-card rounded-2xl overflow-hidden border ${
+                    isToday
+                      ? 'border-amber-400/40 bg-amber-400/5 shadow-md'
+                      : 'border-[var(--glass-border)]'
+                  }`}
+                >
                   {/* Day header */}
-                  <div className={`px-3 py-2 border-b-2 border-[#111111] dark:border-[#333333] ${
-                    day === today ? 'bg-[var(--navigo-yellow)] text-[#111111]' : ''
-                  }`}>
-                    <p className="font-mono text-[10px] font-bold uppercase tracking-wider">
-                      {day} {day === today && '◆'}
+                  <div
+                    className={`px-3 py-2.5 text-center border-b border-[var(--glass-border)] ${
+                      isToday ? 'bg-[var(--gold)] text-white' : 'glass-2 text-[var(--text-primary)]'
+                    }`}
+                  >
+                    <p className="font-mono text-[10px] font-extrabold uppercase tracking-wider">
+                      {day} {isToday && '◆'}
                     </p>
                   </div>
 
                   {/* Slots */}
                   <div className="p-2 space-y-1.5 min-h-[120px]">
                     {slotsByDay[day]?.length === 0 && (
-                      <p className="font-mono text-[9px] text-gray-400 uppercase text-center pt-3">—</p>
+                      <p className="font-mono text-[9px] text-[var(--text-subtle)] uppercase text-center pt-4">—</p>
                     )}
                     {slotsByDay[day]?.map((slot) => {
                       const isCurrent = isCurrentPeriod(slot.startTime, slot.endTime) && day === today;
                       return (
                         <div
                           key={slot.id}
-                          className={`p-2 border ${
+                          className={`p-2 rounded-lg text-left border transition-all ${
                             isCurrent
-                              ? 'border-[var(--navigo-green)] bg-[var(--navigo-green)]/10'
-                              : 'border-[#E5E7EB] dark:border-[#2A2A2A] bg-white dark:bg-[#1A1A1A]'
+                              ? 'border-emerald-500/40 bg-emerald-500/10'
+                              : 'border-[var(--glass-border)] glass-1'
                           }`}
                         >
-                          <p className="font-mono text-[8px] text-gray-400">{slot.startTime}–{slot.endTime}</p>
-                          <p className="text-[10px] font-bold leading-tight mt-0.5">{slot.subject}</p>
+                          <p className="font-mono text-[8px] text-[var(--text-muted)]">{slot.startTime}–{slot.endTime}</p>
+                          <p className="text-[10px] font-bold leading-tight mt-0.5 text-[var(--text-primary)] truncate">{slot.subject}</p>
                           {isCurrent && (
-                            <span className="text-[8px] font-mono text-[var(--navigo-green)] font-bold">● NOW</span>
+                            <span className="text-[8px] font-mono text-emerald-500 font-bold">● NOW</span>
                           )}
                         </div>
                       );
                     })}
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
         </div>
       )}
