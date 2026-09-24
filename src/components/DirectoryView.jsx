@@ -126,17 +126,17 @@ export default function DirectoryView({ setSelectedBuilding }) {
       </div>
 
       {/* Filter chips */}
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
+      <div className="flex flex-nowrap items-center gap-2 overflow-x-auto scrollbar-hide py-2 px-1 w-full max-w-full snap-x snap-mandatory overscroll-x-contain [-webkit-overflow-scrolling:touch]">
         {FILTER_DEFS.map((f) => {
           const isActive = activeFilter === f.key;
           return (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}
-              className={`text-xs font-semibold px-4 py-2 rounded-full transition-all whitespace-nowrap select-none ${
+              className={`text-xs font-semibold px-4 py-2 rounded-full transition-all duration-300 whitespace-nowrap select-none snap-start ${
                 isActive
-                  ? 'bg-amber-400 text-black shadow-sm font-bold scale-[1.02]'
-                  : 'glass-1 border border-[var(--glass-border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--glass-border-strong)]'
+                  ? 'bg-[var(--gold)] text-white shadow-[var(--shadow-gold)] font-bold scale-105'
+                  : 'glass-1 border border-[var(--glass-border)] text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:border-[var(--glass-border-strong)] hover:scale-105 hover:shadow-lg'
               }`}
             >
               {f.label}

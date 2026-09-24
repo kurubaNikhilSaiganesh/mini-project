@@ -139,7 +139,7 @@ function ExamCard({ exam, onFindSeat }) {
         <div className="flex items-center gap-2">
           <button
             onClick={onFindSeat}
-            className="glass-btn glass-btn-primary glass-btn-sm"
+            className="glass-btn glass-btn-primary glass-btn-sm rounded-full flex items-center gap-1.5"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
@@ -233,7 +233,7 @@ export default function ExamsView() {
         </div>
         <button
           onClick={() => navigateTo('seating')}
-          className="glass-btn glass-btn-primary glass-btn-sm shrink-0"
+          className="glass-btn glass-btn-blue glass-btn-sm rounded-full shrink-0"
         >
           Find My Seat
         </button>

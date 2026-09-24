@@ -1,5 +1,123 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import { PanelLeftClose, PanelLeftOpen, X } from 'lucide-react';
+
+// ── Unique Futuristic High-Craft Icons ─────────────────────────────
+
+const ICONS = {
+  // Home: Isometric Campus Command Beacon / Hex Portal with Core
+  today: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M12 2L2 7l10 5 10-5-10-5z" />
+      <path d="M2 17l10 5 10-5" />
+      <path d="M2 12l10 5 10-5" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  // Find a Route: Vector Waypoint Trajectory with Radar Sweep
+  route: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <circle cx="5" cy="19" r="2.5" />
+      <circle cx="19" cy="5" r="2.5" />
+      <path d="M7.5 19H12a6 6 0 0 0 6-6V7.5" />
+      <path d="M14.5 9.5L18 6l3.5 3.5" />
+    </svg>
+  ),
+  // Campus Directory: Architectural Spatial Blueprint Grid
+  directory: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <rect x="3" y="3" width="7" height="7" rx="1.5" />
+      <rect x="14" y="3" width="7" height="7" rx="1.5" />
+      <rect x="3" y="14" width="7" height="7" rx="1.5" />
+      <rect x="14" y="14" width="7" height="7" rx="1.5" />
+      <circle cx="6.5" cy="6.5" r="1" fill="currentColor" />
+      <circle cx="17.5" cy="17.5" r="1" fill="currentColor" />
+    </svg>
+  ),
+  // Events: Celestial Supernova Crystalline Flare
+  events: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M12 2l2.2 6.3L20 9l-5 4.2 1.5 6.8L12 16.5l-4.5 3.5 1.5-6.8L4 9l5.8-.7L12 2z" />
+      <circle cx="12" cy="11.5" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  // Notices: Ultrasonic Broadcasting Beacon Tower
+  notices: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M4 11a8 8 0 0 1 16 0c0 4.5 1.5 6 2 7H2c.5-1 2-2.5 2-7z" />
+      <path d="M10 21h4" />
+      <path d="M12 2v2" />
+      <circle cx="12" cy="11" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  // Timetable: Dual-Orbital Chronometer Dial with Tick Arcs
+  timetable: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M12 6.5v5.5l3.5 2" />
+      <circle cx="12" cy="12" r="2" fill="currentColor" />
+      <path d="M12 2.5v1.5M12 20v1.5M2.5 12H4M20 12h1.5" />
+    </svg>
+  ),
+  // Classes: Cybernetic Holo-Deck Learning Prism
+  classes: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+      <path d="M8 7h8M8 11h5" />
+    </svg>
+  ),
+  // Faculty: Biometric Leadership Crest with Geometric Shield
+  faculty: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M6 21v-2a6 6 0 0 1 12 0v2" />
+      <path d="M3 10a9 9 0 0 0 3 6M21 10a9 9 0 0 1-3 6" />
+    </svg>
+  ),
+  // Rooms: Isometric 3D Architectural Smart Chamber
+  rooms: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M3 7l9-4 9 4v10l-9 4-9-4V7z" />
+      <path d="M12 3v18" />
+      <path d="M12 12l9-4M12 12l-9-4" />
+      <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  // Exam Schedule: Official Quantum Encrypted Certificate Seal
+  exams: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7l-5-5z" />
+      <path d="M14 2v5h5" />
+      <circle cx="11" cy="14" r="3" />
+      <path d="M13 16l3 3" />
+    </svg>
+  ),
+  // Exam Seating: Amphitheater Perspective Seating Matrix
+  seating: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M5 20v-5a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v5" />
+      <circle cx="12" cy="6" r="3" />
+      <path d="M2 20h20" />
+      <circle cx="12" cy="14" r="1.5" fill="currentColor" />
+    </svg>
+  ),
+  // Search: Quantum Lidar Reticle Crosshair Scanner
+  search: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M21 21l-4.35-4.35" />
+      <path d="M11 7v2M11 13v2M7 11h2M13 11h2" />
+    </svg>
+  ),
+  // Admin Panel: Cyber Master Security Shield & Matrix
+  admin: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
+      <path d="M12 2l8 4v6c0 5.5-3.5 10-8 11-4.5-1-8-5.5-8-11V6l8-4z" />
+      <circle cx="12" cy="11" r="2.5" />
+      <path d="M12 13.5V17" />
+    </svg>
+  ),
+};
 
 // ── Navigation items (grouped) ───────────────────────────────────
 
@@ -7,145 +125,33 @@ const NAV_GROUPS = [
   {
     label: 'Campus',
     items: [
-      {
-        id: 'today',
-        label: 'Home',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
-        ),
-      },
-      {
-        id: 'route',
-        label: 'Find a Route',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-          </svg>
-        ),
-      },
-      {
-        id: 'directory',
-        label: 'Campus Directory',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          </svg>
-        ),
-      },
-      {
-        id: 'events',
-        label: 'Events',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-          </svg>
-        ),
-      },
-      {
-        id: 'notices',
-        label: 'Notices',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-        ),
-      },
+      { id: 'today', label: 'Home', icon: ICONS.today },
+      { id: 'route', label: 'Find a Route', icon: ICONS.route },
+      { id: 'directory', label: 'Campus Directory', icon: ICONS.directory },
+      { id: 'events', label: 'Events', icon: ICONS.events },
+      { id: 'notices', label: 'Notices', icon: ICONS.notices },
     ],
   },
   {
     label: 'Academic',
     items: [
-      {
-        id: 'timetable',
-        label: 'Timetable',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-        ),
-      },
-      {
-        id: 'classes',
-        label: 'Classes',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-          </svg>
-        ),
-      },
-      {
-        id: 'faculty',
-        label: 'Faculty',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        ),
-      },
-      {
-        id: 'rooms',
-        label: 'Rooms',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <line x1="9" y1="22" x2="9" y2="12" />
-            <line x1="15" y1="22" x2="15" y2="12" />
-            <line x1="9" y1="12" x2="15" y2="12" />
-          </svg>
-        ),
-      },
+      { id: 'timetable', label: 'Timetable', icon: ICONS.timetable },
+      { id: 'classes', label: 'Classes', icon: ICONS.classes },
+      { id: 'faculty', label: 'Faculty', icon: ICONS.faculty },
+      { id: 'rooms', label: 'Rooms', icon: ICONS.rooms },
     ],
   },
   {
     label: 'Examinations',
     items: [
-      {
-        id: 'exams',
-        label: 'Exam Schedule',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
-            <line x1="16" y1="13" x2="8" y2="13" />
-            <line x1="16" y1="17" x2="8" y2="17" />
-            <polyline points="10 9 9 9 8 9" />
-          </svg>
-        ),
-      },
-      {
-        id: 'seating',
-        label: 'Exam Seating',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-            <circle cx="12" cy="10" r="3" />
-          </svg>
-        ),
-      },
-      {
-        id: 'search',
-        label: 'Search',
-        icon: (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-            <circle cx="11" cy="11" r="8" />
-            <path d="M21 21l-4.35-4.35" />
-          </svg>
-        ),
-      },
+      { id: 'exams', label: 'Exam Schedule', icon: ICONS.exams },
+      { id: 'seating', label: 'Exam Seating', icon: ICONS.seating },
+      { id: 'search', label: 'Search', icon: ICONS.search },
     ],
   },
 ];
 
-// ── SidebarContent with Liquid River Flow & Hold-to-Zoom ─────────
+// ── SidebarContent ───────────────────────────────────────────────
 
 function SidebarContent({
   activeView,
@@ -156,100 +162,8 @@ function SidebarContent({
   role,
   setRole,
 }) {
-  const itemRefs = useRef({});
-  const navContainerRef = useRef(null);
-  const [hoveredId, setHoveredId] = useState(null);
-  const [heldId, setHeldId] = useState(null);
-  const isDraggingRef = useRef(false);
-
-  // Position of the liquid sliding indicator (GPU accelerated translateY)
-  const [pillStyle, setPillStyle] = useState({ transform: 'translateY(0)', height: 0, opacity: 0 });
-  const cachedBoundsRef = useRef([]);
-  const rafRef = useRef(null);
-
-  // Update pill position based on active item or currently dragged/hovered item
-  const updatePill = useCallback(() => {
-    const targetId = heldId || hoveredId || activeView;
-    const targetEl = itemRefs.current[targetId];
-    const containerEl = navContainerRef.current;
-
-    if (targetEl && containerEl) {
-      const targetRect = targetEl.getBoundingClientRect();
-      const containerRect = containerEl.getBoundingClientRect();
-      const relativeTop = targetRect.top - containerRect.top + containerEl.scrollTop;
-
-      setPillStyle({
-        transform: `translateY(${relativeTop}px)`,
-        height: targetRect.height,
-        opacity: 1,
-      });
-    }
-  }, [activeView, hoveredId, heldId]);
-
-  useEffect(() => {
-    updatePill();
-  }, [updatePill]);
-
-  // Keep indicator aligned on window resize or view scroll
-  useEffect(() => {
-    const onResize = () => updatePill();
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [updatePill]);
-
-  // Pointer drag/scrub handlers — zero DOM reading during pointermove
-  const handlePointerDown = (e, itemId) => {
-    isDraggingRef.current = true;
-    setHeldId(itemId);
-    // Cache item rects once on start so pointermove does zero DOM queries!
-    cachedBoundsRef.current = Object.entries(itemRefs.current)
-      .filter(([, el]) => Boolean(el))
-      .map(([id, el]) => {
-        const r = el.getBoundingClientRect();
-        return { id, top: r.top, bottom: r.bottom };
-      });
-  };
-
-  const handlePointerMove = (e) => {
-    if (!isDraggingRef.current) return;
-    const clientY = e.clientY;
-    // Throttle with requestAnimationFrame to eliminate high-frequency re-renders
-    if (rafRef.current) return;
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null;
-      const bounds = cachedBoundsRef.current;
-      for (let i = 0; i < bounds.length; i++) {
-        if (clientY >= bounds[i].top && clientY <= bounds[i].bottom) {
-          if (bounds[i].id !== heldId) {
-            setHeldId(bounds[i].id);
-          }
-          break;
-        }
-      }
-    });
-  };
-
-  const handlePointerUp = () => {
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
-    if (isDraggingRef.current) {
-      if (heldId) {
-        setActiveView(heldId);
-      }
-      isDraggingRef.current = false;
-      setHeldId(null);
-    }
-  };
-
   return (
-    <div
-      className="flex flex-col h-full select-none"
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerUp}
-    >
+    <div className="flex flex-col h-full select-none">
       {/* Header — Logo + Hide / Close Controls */}
       <div className="px-5 pt-5 pb-4 flex items-center justify-between border-b border-[var(--sidebar-border)]">
         <div className="flex items-center gap-3">
@@ -294,7 +208,7 @@ function SidebarContent({
         </div>
       </div>
 
-      {/* Role toggle with smooth animated moving slider */}
+      {/* Role toggle with smooth animated slider */}
       <div className="px-4 pt-3.5 pb-2">
         <div
           className="relative flex p-1 rounded-full border border-black/10 dark:border-white/10"
@@ -321,8 +235,8 @@ function SidebarContent({
                 onClick={() => setRole(r)}
                 className="relative z-10 flex-1 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-full transition-colors duration-200 text-center"
                 style={{
-                  color: isCurrent ? '#FFD60A' : 'rgba(255,255,255,0.7)',
-                  textShadow: isCurrent ? '0 0 8px rgba(255,214,10,0.3)' : 'none',
+                  color: isCurrent ? 'var(--gold)' : 'rgba(255,255,255,0.7)',
+                  textShadow: isCurrent ? '0 0 12px var(--shadow-gold)' : 'none',
                   fontWeight: 700,
                 }}
               >
@@ -333,55 +247,38 @@ function SidebarContent({
         </div>
       </div>
 
-      {/* Nav groups — Liquid River Flow Navigation */}
+      {/* Nav groups — Clean, Gap-Free, Smooth Scrollable Navigation */}
       <nav
-        ref={navContainerRef}
-        onScroll={updatePill}
-        className="flex-1 overflow-y-auto px-3 py-2 scrollbar-hide space-y-4 liquid-nav-track"
+        className="flex-1 overflow-y-auto px-3.5 pt-2 pb-6 space-y-4 scrollbar-thin select-none relative"
         aria-label="Primary navigation"
       >
-        {/* Sliding Liquid River Indicator */}
-        <div
-          className={`liquid-nav-pill ${heldId ? 'holding' : ''}`}
-          style={{
-            transform: pillStyle.transform,
-            height: `${pillStyle.height}px`,
-            opacity: pillStyle.opacity,
-          }}
-          aria-hidden="true"
-        />
-
         {NAV_GROUPS.map((group) => (
           <div key={group.label}>
             <p className="nav-section-label select-none">{group.label}</p>
             <div className="space-y-1">
               {group.items.map((item) => {
                 const isActive = activeView === item.id;
-                const isTarget = (heldId || hoveredId || activeView) === item.id;
-                const isZoomed = heldId === item.id;
 
                 return (
                   <button
                     key={item.id}
-                    ref={(el) => { itemRefs.current[item.id] = el; }}
+                    data-id={item.id}
                     onClick={() => {
                       setActiveView(item.id);
                       if (isMobile && onClose) onClose();
                     }}
-                    onPointerDown={(e) => handlePointerDown(e, item.id)}
-                    onMouseEnter={() => setHoveredId(item.id)}
-                    onMouseLeave={() => setHoveredId(null)}
-                    className={`liquid-nav-item ${isActive ? 'active' : ''} ${isZoomed ? 'zoomed' : ''}`}
+                    className={`w-full group flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-all duration-200 text-left relative ${
+                      isActive
+                        ? 'bg-[var(--gold)]/15 dark:bg-[var(--gold)]/20 border border-[var(--gold)]/35 text-[var(--sidebar-text-active)] font-bold shadow-xs'
+                        : 'border border-transparent text-[var(--sidebar-text)] hover:text-[var(--sidebar-text-active)] hover:bg-black/5 dark:hover:bg-white/5 font-medium'
+                    }`}
                     aria-current={isActive ? 'page' : undefined}
-                    style={{
-                      transform: isZoomed ? 'scale(1.10) translateX(6px)' : undefined,
-                    }}
                   >
                     <span
-                      className="nav-icon"
+                      className="nav-icon transition-transform duration-200 group-hover:scale-110 shrink-0"
                       style={{
-                        color: isTarget ? 'var(--gold)' : 'var(--sidebar-text)',
-                        transform: isZoomed ? 'scale(1.2)' : undefined,
+                        color: isActive ? 'var(--gold)' : 'currentColor',
+                        filter: isActive ? 'drop-shadow(0 0 6px var(--gold))' : 'none',
                       }}
                     >
                       {item.icon}
@@ -389,7 +286,7 @@ function SidebarContent({
                     <span className="text-[13px] tracking-tight">{item.label}</span>
                     {isActive && (
                       <span
-                        className="ml-auto w-1.5 h-1.5 rounded-full shrink-0 shadow-sm"
+                        className="ml-auto w-2 h-2 rounded-full shrink-0 shadow-[0_0_8px_var(--gold)]"
                         style={{ background: 'var(--gold)' }}
                       />
                     )}
@@ -406,40 +303,34 @@ function SidebarContent({
           <div className="space-y-1">
             {(() => {
               const isAdminActive = activeView === 'admin';
-              const isAdminTarget = (heldId || hoveredId || activeView) === 'admin';
-              const isAdminZoomed = heldId === 'admin';
 
               return (
                 <button
-                  ref={(el) => { itemRefs.current['admin'] = el; }}
+                  data-id="admin"
                   onClick={() => {
                     setActiveView('admin');
                     if (isMobile && onClose) onClose();
                   }}
-                  onPointerDown={(e) => handlePointerDown(e, 'admin')}
-                  onMouseEnter={() => setHoveredId('admin')}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className={`liquid-nav-item ${isAdminActive ? 'active' : ''} ${isAdminZoomed ? 'zoomed' : ''}`}
+                  className={`w-full group flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-all duration-200 text-left relative ${
+                    isAdminActive
+                      ? 'bg-[var(--gold)]/15 dark:bg-[var(--gold)]/20 border border-[var(--gold)]/35 text-[var(--sidebar-text-active)] font-bold shadow-xs'
+                      : 'border border-transparent text-[var(--sidebar-text)] hover:text-[var(--sidebar-text-active)] hover:bg-black/5 dark:hover:bg-white/5 font-medium'
+                  }`}
                   aria-current={isAdminActive ? 'page' : undefined}
-                  style={{
-                    transform: isAdminZoomed ? 'scale(1.10) translateX(6px)' : undefined,
-                  }}
                 >
                   <span
-                    className="nav-icon"
+                    className="nav-icon transition-transform duration-200 group-hover:scale-110 shrink-0"
                     style={{
-                      color: isAdminTarget ? 'var(--gold)' : 'var(--sidebar-text)',
-                      transform: isAdminZoomed ? 'scale(1.2)' : undefined,
+                      color: isAdminActive ? 'var(--gold)' : 'currentColor',
+                      filter: isAdminActive ? 'drop-shadow(0 0 6px var(--gold))' : 'none',
                     }}
                   >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] shrink-0">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    </svg>
+                    {ICONS.admin}
                   </span>
                   <span className="text-[13px] tracking-tight">Admin Panel</span>
                   <span
                     className="ml-auto font-mono text-[8px] px-2 py-0.5 font-bold tracking-wide rounded-full shadow-sm"
-                    style={{ background: 'var(--gold)', color: '#111' }}
+                    style={{ background: 'var(--gold)', color: '#ffffff' }}
                   >
                     ADMIN
                   </span>
@@ -455,7 +346,7 @@ function SidebarContent({
         <div className="flex items-center gap-3 p-1.5 rounded-full bg-[rgba(255,255,255,0.03)] dark:bg-[rgba(255,255,255,0.04)] border border-[var(--sidebar-border)]">
           <div
             className="w-8 h-8 flex items-center justify-center text-[11px] font-bold font-mono shrink-0 rounded-full shadow-sm"
-            style={{ background: 'var(--gold)', color: '#111' }}
+            style={{ background: 'var(--gold)', color: '#ffffff' }}
           >
             AK
           </div>

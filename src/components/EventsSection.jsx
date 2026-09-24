@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext';
 import MarqueeTicker from './MarqueeTicker';
 import EventCard from './EventCard';
 
-const STATUSES = ['ALL', 'UPCOMING', 'COMPLETED'];
+const STATUSES = ['UPCOMING', 'COMPLETED'];
 
 const SPAN_CLASS = {
   large:  'bento-large',
@@ -28,9 +28,9 @@ export default function EventsSection() {
   const completedCount = events.filter((e) => e.status === 'COMPLETED').length;
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="w-full">
       {/* Section header */}
-      <div className="px-4 md:px-8 py-8 border-b-2 border-[#111111] dark:border-[#333333]">
+      <div className="px-4 md:px-8 py-8">
         <p className="font-mono text-[10px] text-[var(--navigo-yellow)] uppercase tracking-widest mb-2">
           [EVENTS_BULLETIN]
         </p>

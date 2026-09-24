@@ -153,7 +153,7 @@ export default function DashboardView() {
       <div
         className="glass-card glass-2 rounded-3xl p-6 md:p-10 relative overflow-hidden shadow-xl"
         style={{
-          border: '1px solid var(--glass-border-strong)',
+          border: '1px solid var(--glass-border)',
         }}
       >
         {/* Ambient radial glow */}
@@ -169,7 +169,7 @@ export default function DashboardView() {
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div className="max-w-xl">
             {/* Live date pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-4 glass-1 border border-[var(--glass-border)]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-4 glass-1 border border-[var(--glass-border)] transition-all duration-300 cursor-default">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="font-mono text-[10px] font-semibold tracking-wider uppercase text-[var(--text-muted)]">
                 {date} · ALTS CAMPUS
@@ -237,7 +237,7 @@ export default function DashboardView() {
       </div>
 
       {/* ── Route Finder + Next Stop Section ── */}
-      <div className="space-y-4">
+      <div className="space-y-4 relative z-30">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-amber-400" />
@@ -250,8 +250,8 @@ export default function DashboardView() {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-30">
+          <div className="lg:col-span-2 relative z-40">
             <RouteController />
           </div>
 
@@ -268,7 +268,7 @@ export default function DashboardView() {
             <div>
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <span className="inline-block px-3 py-1 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider mb-2 glass-1 border border-[var(--glass-border)] text-amber-500">
+                  <span className="inline-block px-3 py-1 rounded-full text-[9px] font-mono font-bold uppercase tracking-wider mb-2 glass-1 border border-[var(--glass-border)] text-amber-500 magic-hover hover:scale-105 transition-all duration-300 cursor-default">
                     {currentSlot ? 'Current Class' : nextSlot ? 'Next Stop' : 'Schedule Finished'}
                   </span>
                   {displaySlot ? (
@@ -331,7 +331,7 @@ export default function DashboardView() {
       </div>
 
       {/* ── What NaviGO Solves ── */}
-      <div className="space-y-4">
+      <div className="space-y-4 relative z-10">
         <p className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest px-1">
           Designed for ALTS Students & Visitors
         </p>
@@ -352,7 +352,7 @@ export default function DashboardView() {
       </div>
 
       {/* ── Core Systems Grid ── */}
-      <div className="space-y-4">
+      <div className="space-y-4 relative z-10">
         <div className="flex items-center justify-between px-1">
           <p className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest">
             Core University Systems
