@@ -5,36 +5,96 @@ import { RefreshCcw, Navigation, CheckCircle2, AlertCircle, ArrowRight, X } from
 
 const DESTINATIONS = BUILDINGS.filter((b) => b.type !== 'gate');
 
+import { useState, useRef, useEffect } from 'react';
+
 function SelectField({ label, value, onChange, placeholder, dotColor }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [isOpen]);
+
+  const selectedNode = DESTINATIONS.find((b) => b.id === value);
+  const displayLabel = selectedNode ? `${selectedNode.label} (${selectedNode.code})` : placeholder;
+
   return (
-    <div className="flex-1 w-full">
+    <div className="flex-1 min-w-0 w-full relative" ref={containerRef}>
       <label className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-wider mb-2 block font-semibold">
         {label}
       </label>
-      <div className="relative">
+      <div
+        className="w-full glass-select rounded-full pl-10 pr-10 py-3 text-sm font-medium transition-all shadow-xs cursor-pointer flex items-center justify-between select-none magic-hover"
+        onClick={() => setIsOpen(!isOpen)}
+        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+      >
         <div
           className="absolute left-4 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full z-10 shadow-sm"
           style={{ background: dotColor }}
         />
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full glass-select rounded-full pl-10 pr-10 py-3 text-sm font-medium transition-all shadow-xs"
-          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+        <span className={`truncate ${!value ? 'text-[var(--text-muted)]' : 'text-[var(--text-primary)] font-semibold'}`}>
+          {displayLabel}
+        </span>
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          className={`text-[var(--text-muted)] shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         >
-          <option value="" disabled className="text-gray-400 dark:bg-[#141414]">{placeholder}</option>
-          {DESTINATIONS.map((b) => (
-            <option key={b.id} value={b.id} className="dark:bg-[#141414] text-[var(--text-primary)]">
-              {b.label} ({b.code})
-            </option>
-          ))}
-        </select>
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--text-muted)]">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <path d="M6 9l6 6 6-6"/>
-          </svg>
-        </div>
+          <path d="M6 9l6 6 6-6" />
+        </svg>
       </div>
+
+      {isOpen && (
+        <div
+          className="absolute top-full mt-2 w-full left-0 right-0 sm:min-w-[280px] rounded-3xl shadow-2xl z-[100] max-h-64 overflow-y-auto overscroll-contain p-2 border backdrop-blur-xl"
+          style={{
+            backgroundColor: 'var(--glass-4)',
+            backdropFilter: 'blur(24px)',
+            WebkitBackdropFilter: 'blur(24px)',
+            borderColor: 'var(--glass-border)',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.30), 0 0 0 1px rgba(255,255,255,0.08)',
+          }}
+        >
+          <div className="p-1 space-y-1">
+            {DESTINATIONS.map((b) => {
+              const isSelected = b.id === value;
+              return (
+                <div
+                  key={b.id}
+                  onClick={() => {
+                    onChange(b.id);
+                    setIsOpen(false);
+                  }}
+                  className={`px-3.5 py-2.5 text-sm rounded-2xl cursor-pointer transition-all duration-150 flex items-center justify-between mx-0.5 ${
+                    isSelected
+                      ? 'bg-[var(--gold)] text-white font-bold shadow-sm'
+                      : 'hover:bg-black/5 dark:hover:bg-white/10 text-[var(--text-primary)] font-medium'
+                  }`}
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  <span className="truncate">{b.label}</span>
+                  <span className={`font-mono text-[10px] ml-2 shrink-0 px-2 py-0.5 rounded-md ${isSelected ? 'bg-white/20 text-white' : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)]'}`}>
+                    {b.code}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -55,13 +115,15 @@ export default function RouteController() {
 
   return (
     <div
-      className="glass-card glass-2 rounded-3xl p-6 md:p-8 border border-[var(--glass-border-strong)] shadow-xl relative overflow-hidden"
+      className="glass-card glass-2 rounded-3xl p-6 md:p-8 border border-[var(--glass-border-strong)] shadow-xl relative"
     >
-      {/* Subtle ambient light */}
-      <div
-        className="absolute -top-16 -left-16 w-64 h-64 rounded-full opacity-15 blur-3xl pointer-events-none"
-        style={{ background: 'var(--gold)' }}
-      />
+      {/* Subtle ambient light restricted to container bounds */}
+      <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none z-0">
+        <div
+          className="absolute -top-16 -left-16 w-64 h-64 rounded-full opacity-15 blur-3xl"
+          style={{ background: 'var(--gold)' }}
+        />
+      </div>
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 relative z-10">
@@ -82,7 +144,7 @@ export default function RouteController() {
           </p>
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-1 border border-[var(--glass-border)] self-start">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-1 border border-[var(--glass-border)] self-start magic-hover hover:scale-105 transition-all duration-300 cursor-default">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           <span className="font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)] font-semibold">
             Live Waypoints
@@ -90,8 +152,8 @@ export default function RouteController() {
         </div>
       </div>
 
-      {/* FROM / SWAP / TO / GET */}
-      <div className="flex flex-col md:flex-row items-end gap-3 relative z-10">
+      {/* FROM / SWAP / TO / GET — Responsive Grid with clean wrapping */}
+      <div className="flex flex-col sm:flex-row flex-wrap xl:flex-nowrap items-stretch sm:items-end gap-3 relative z-20 w-full">
         <SelectField
           label="Starting From"
           value={fromNode}
@@ -102,7 +164,7 @@ export default function RouteController() {
 
         <button
           onClick={swapNodes}
-          className="glass-btn rounded-full w-11 h-11 p-0 flex items-center justify-center shrink-0 mb-0.5 hover:rotate-180 transition-transform duration-300"
+          className="glass-btn rounded-full w-11 h-11 p-0 flex items-center justify-center shrink-0 mb-0.5 self-center sm:self-end hover:rotate-180 transition-transform duration-300 shadow-sm"
           title="Swap starting point and destination"
           aria-label="Swap starting point and destination"
         >
@@ -120,7 +182,7 @@ export default function RouteController() {
         <button
           onClick={calculateRoute}
           disabled={!fromNode || !toNode || fromNode === toNode}
-          className="glass-btn glass-btn-primary rounded-full py-3.5 px-7 whitespace-nowrap shrink-0 h-[48px] w-full md:w-auto font-bold shadow-md flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none"
+          className="glass-btn glass-btn-primary rounded-full py-3.5 px-7 whitespace-nowrap shrink-0 h-[48px] w-full xl:w-auto font-bold shadow-md flex items-center justify-center gap-2 disabled:opacity-40 disabled:pointer-events-none mt-2 sm:mt-0"
           aria-label="Calculate route"
         >
           <span>Get Route</span>

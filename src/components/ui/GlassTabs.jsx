@@ -35,9 +35,9 @@ export function GlassTabs({
   const variantStyles = {
     gold: {
       activeText: 'var(--text-primary)',
-      indicatorBg: 'linear-gradient(135deg, rgba(244, 180, 0, 0.25) 0%, rgba(244, 180, 0, 0.12) 100%)',
-      indicatorBorder: '1px solid rgba(244, 180, 0, 0.45)',
-      indicatorGlow: '0 4px 18px rgba(244, 180, 0, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.4)',
+      indicatorBg: 'linear-gradient(135deg, rgba(244, 180, 0, 0.30) 0%, rgba(244, 180, 0, 0.15) 100%)',
+      indicatorBorder: '1px solid rgba(244, 180, 0, 0.55)',
+      indicatorGlow: '0 6px 24px rgba(244, 180, 0, 0.32), inset 0 1px 2px rgba(255, 255, 255, 0.5)',
       badgeBg: 'var(--gold)',
       badgeColor: '#111',
     },
@@ -99,14 +99,14 @@ export function GlassTabs({
             role="tab"
             aria-selected={isActive}
             onClick={() => onTabChange(tab.id)}
-            className={`relative z-10 flex items-center justify-center gap-2 px-4 md:px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-200 select-none whitespace-nowrap ${
+            className={`relative z-10 flex items-center justify-center gap-2 px-4 md:px-5 py-2 text-xs md:text-sm font-semibold rounded-full transition-all duration-250 select-none whitespace-nowrap ${
               isActive
-                ? 'scale-[1.02]'
-                : 'text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:scale-[1.01]'
+                ? 'scale-[1.04]'
+                : 'text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:scale-[1.03]'
             }`}
             style={{
               color: isActive ? style.activeText : undefined,
-              textShadow: isActive ? '0 0 12px rgba(244, 180, 0, 0.2)' : 'none',
+              textShadow: isActive ? '0 0 16px rgba(244, 180, 0, 0.35)' : 'none',
             }}
           >
             {tab.icon && <span className="text-sm shrink-0">{tab.icon}</span>}

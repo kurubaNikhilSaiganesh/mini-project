@@ -17,21 +17,21 @@
     --bg-surface:     #F0EDE5;
     --bg-elevated:    #F8F6F1;
 
-    /* Glass surfaces — intense translucent whites */
-    --glass-1:        rgba(255, 255, 255, 0.45);   /* subtle cards */
-    --glass-2:        rgba(255, 255, 255, 0.65);   /* floating controls */
-    --glass-3:        rgba(255, 255, 255, 0.75);   /* dropdowns */
-    --glass-4:        rgba(255, 255, 255, 0.88);   /* modals */
-    --glass-5:        rgba(255, 255, 255, 0.96);   /* alerts */
+    /* Glass surfaces — more transparent so cards blend, not box-out */
+    --glass-1:        rgba(255, 255, 255, 0.30);   /* subtle cards */
+    --glass-2:        rgba(255, 255, 255, 0.45);   /* floating controls */
+    --glass-3:        rgba(255, 255, 255, 0.62);   /* dropdowns */
+    --glass-4:        rgba(255, 255, 255, 0.80);   /* modals */
+    --glass-5:        rgba(255, 255, 255, 0.94);   /* alerts */
 
-    /* Glass borders — strong frosted rims */
-    --glass-border:        rgba(255, 255, 255, 0.85);
-    --glass-border-strong: rgba(255, 255, 255, 0.95);
-    /* Inset highlight — creates thick, liquid edge */
-    --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+    /* Glass borders — softened so cards don't appear as harsh boxes */
+    --glass-border:        rgba(0, 0, 0, 0.06);
+    --glass-border-strong: rgba(0, 0, 0, 0.10);
+    /* Inset highlight — creates subtle frosted edge (toned down to avoid white box in light mode) */
+    --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 
     /* Sidebar — Frosted Luminous White Glass */
-    --sidebar-bg:            rgba(235, 242, 250, 0.75); /* Subtle blue-gray tint for contrast */
+    --sidebar-bg:            rgba(238, 235, 226, 0.75); /* Aligned pale yellow tint */
     --sidebar-surface:       rgba(255, 255, 255, 0.55);
     --sidebar-border:        rgba(255, 255, 255, 0.70);
     --sidebar-border-strong: rgba(255, 255, 255, 0.90);
@@ -255,12 +255,18 @@
       border-color var(--t-fast) ease;
   }
 
+
   .glass-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md), var(--glass-highlight);
-    border-color: var(--glass-border-strong);
   }
 
+  /* In dark mode suppress the white border flash completely */
+  .dark .glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--glass-border);
+  }
   .glass-card-active {
     background: var(--glass-2);
     border-color: var(--gold);
@@ -324,16 +330,86 @@
     border-color: transparent;
     font-weight: 700;
     box-shadow: var(--shadow-gold);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Shimmer sweep layer */
+  .glass-btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.45) 50%, transparent 60%);
+    background-size: 200% 100%;
+    background-position: 200% 0;
+    transition: background-position 0.55s cubic-bezier(0.25, 1, 0.35, 1);
+    border-radius: inherit;
+    pointer-events: none;
   }
 
   .glass-btn-primary:hover {
+    transform: scale(1.03);
     background: var(--gold-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 28px rgba(244, 180, 0, 0.35);
+    box-shadow:
+      0 8px 32px rgba(244, 180, 0, 0.50),
+      0 2px 8px rgba(244, 180, 0, 0.30),
+      inset 0 1px 1px rgba(255, 255, 255, 0.35);
   }
 
+  .glass-btn-primary:hover::after {
+    background-position: -200% 0;
+  }
+
+  /* In dark mode the shimmer looks like an unintended white flash — hide it */
+  .dark .glass-btn-primary::after { display: none; }
+
   .glass-btn-primary:active {
-    transform: translateY(0) scale(0.98);
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(244, 180, 0, 0.25);
+  }
+
+  /* Blue primary variant — for seating / route cards */
+  .glass-btn-blue {
+    background: linear-gradient(135deg, #007AFF 0%, #0A84FF 100%);
+    color: #ffffff;
+    border-color: transparent;
+    font-weight: 700;
+    box-shadow: 0 4px 18px rgba(0, 122, 255, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-btn-blue::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%);
+    background-size: 200% 100%;
+    background-position: 200% 0;
+    transition: background-position 0.55s cubic-bezier(0.25, 1, 0.35, 1);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .glass-btn-blue:hover {
+    transform: scale(1.03);
+    background: linear-gradient(135deg, #0A84FF 0%, #409CFF 100%);
+    box-shadow:
+      0 8px 32px rgba(0, 122, 255, 0.55),
+      0 2px 8px rgba(0, 122, 255, 0.30),
+      inset 0 1px 1px rgba(255, 255, 255, 0.25);
+  }
+
+  .glass-btn-blue:hover::after {
+    background-position: -200% 0;
+  }
+
+  /* In dark mode the shimmer looks like an unintended white flash — hide it */
+  .dark .glass-btn-blue::after { display: none; }
+
+  .glass-btn-blue:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
   }
 
   .glass-btn-ghost {
@@ -678,25 +754,27 @@
   .bg-vibrant-teal { background: radial-gradient(circle at 30% 30%, #43e97b 0%, #38f9d7 100%) !important; }
   .bg-vibrant-multi { background: radial-gradient(circle at top left, #FF0055, #007AFF, #00FF88) !important; }
 
-  /* Inner Glass Symbol (like Apple Maps inner circle) */
+  /* Inner Glass Symbol (like Apple Maps thick refractive inner circle) */
   .inner-glass-symbol {
     position: relative;
-    background: rgba(255, 255, 255, 0.15);
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.05));
     box-shadow: 
-      inset 0 2px 4px rgba(255, 255, 255, 0.9),
-      inset 0 -2px 4px rgba(0, 0, 0, 0.15),
-      0 4px 12px rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+      inset 0 0 0 3px rgba(255, 255, 255, 0.4), /* Thick inner refractive ring */
+      inset 0 8px 16px rgba(255, 255, 255, 0.8), /* Top highlight */
+      inset 0 -8px 16px rgba(0, 0, 0, 0.1),      /* Bottom shadow */
+      0 8px 16px rgba(0, 0, 0, 0.2);            /* Drop shadow */
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) brightness(1.1);
+    -webkit-backdrop-filter: blur(12px) brightness(1.1);
   }
   .dark .inner-glass-symbol {
-    background: rgba(255, 255, 255, 0.05);
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.15), rgba(0, 0, 0, 0.2));
     box-shadow: 
-      inset 0 2px 4px rgba(255, 255, 255, 0.3),
-      inset 0 -2px 4px rgba(0, 0, 0, 0.4),
-      0 4px 12px rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+      inset 0 0 0 3px rgba(255, 255, 255, 0.15), /* Thick inner refractive ring */
+      inset 0 8px 16px rgba(255, 255, 255, 0.3), /* Top highlight */
+      inset 0 -8px 16px rgba(0, 0, 0, 0.4),      /* Bottom shadow */
+      0 8px 16px rgba(0, 0, 0, 0.5);            /* Drop shadow */
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   /* Giant Liquid Text */
@@ -708,11 +786,11 @@
     filter: drop-shadow(0 4px 12px rgba(0, 122, 255, 0.2));
   }
   .dark .liquid-text {
-    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.3) 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(170, 220, 255, 0.4) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 8px 24px rgba(0, 122, 255, 0.5));
+    filter: drop-shadow(0 4px 16px rgba(0, 122, 255, 0.5)) drop-shadow(0 2px 4px rgba(255, 255, 255, 0.1));
   }
 
   /* Liquid River Flow Navigation */
@@ -1081,9 +1159,95 @@
   outline-offset: 2px;
 }
 
+/* Magic Hover Shimmer (No Zoom) */
+.magic-hover {
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.magic-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+  background-size: 200% 100%;
+  background-position: 200% 0;
+  transition: background-position 0.6s cubic-bezier(0.25, 1, 0.35, 1);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.magic-hover:hover::after {
+  background-position: -200% 0;
+}
+
+.magic-hover:hover {
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.20),
+    0 1px 4px rgba(0, 0, 0, 0.10),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* In dark mode the white shimmer sweep looks like cursor reflection — disable it */
+.dark .magic-hover::after { display: none; }
+.dark .magic-hover:hover { border-color: var(--glass-border); }
+
+.glass-select {
+  background: var(--glass-2);
+  backdrop-filter: var(--blur-sm);
+  -webkit-backdrop-filter: var(--blur-sm);
+  border: 1px solid var(--glass-border);
+}
+.glass-select:hover {
+  background: var(--glass-3);
+}
+
 /* Print */
 @media print {
   .sidebar-mobile, .modal-backdrop { display: none !important; }
+}
+
+/* Magic Hover for Interactive Cards - Only scale internal icons/logos */
+.glass-card[role="button"],
+.glass-card.cursor-pointer,
+.glass-card.group,
+button > .glass-card,
+a > .glass-card {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+@media (hover: hover) {
+  /* Subtle glow for the panel itself, NO scale */
+  .glass-card[role="button"]:hover,
+  .glass-card.cursor-pointer:hover,
+  .glass-card.group:hover,
+  button:hover > .glass-card,
+  a:hover > .glass-card {
+    border-color: var(--glass-border-strong);
+  }
+  
+  /* Magic Movement applied ONLY to icons/logos inside interactive panels */
+  .glass-card[role="button"] svg,
+  .glass-card.cursor-pointer svg,
+  .glass-card.group svg,
+  .glass-card[role="button"] .liquid-glass-icon,
+  .glass-card.cursor-pointer .liquid-glass-icon,
+  .glass-card.group .liquid-glass-icon {
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .glass-card[role="button"]:hover svg,
+  .glass-card.cursor-pointer:hover svg,
+  .glass-card.group:hover svg,
+  .glass-card[role="button"]:hover .liquid-glass-icon,
+  .glass-card.cursor-pointer:hover .liquid-glass-icon,
+  .glass-card.group:hover .liquid-glass-icon,
+  button:hover > .glass-card svg,
+  a:hover > .glass-card svg {
+    transform: scale(1.15) rotate(-2deg);
+  }
 }
 
 /* ── Reduced Motion ────────────────────────────────────────────── */

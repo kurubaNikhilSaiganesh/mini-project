@@ -15,8 +15,9 @@ export default function MarqueeTicker() {
   const items = [...allItems, ...allItems];
 
   return (
-    <div className="overflow-hidden py-3 glass-2 border-y border-[var(--glass-border-strong)] shadow-sm">
-      <div className="ticker-track">
+    <div className="px-3 md:px-5 py-2">
+      <div className="overflow-hidden py-2 glass-2 rounded-full border border-[var(--glass-border-strong)] shadow-sm">
+        <div className="ticker-track">
         {items.map((item, i) => (
           <span
             key={i}
@@ -28,6 +29,7 @@ export default function MarqueeTicker() {
           </span>
         ))}
       </div>
+    </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useState, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { BUILDINGS, FACULTY, ROOMS, CLASSES, TIMETABLE, getRoomById, getClassById } from '../data';
+import { Pencil, Plus, X } from 'lucide-react';
 
 const CATEGORIES = ['WORKSHOP', 'LECTURE', 'TECH_FEST', 'HACKATHON', 'CULTURAL_FEST', 'SPORTS', 'COMPETITION'];
 const SEVERITIES = ['ALERT', 'NOTICE', 'DEADLINE', 'UPDATE', 'EMERGENCY'];
@@ -135,7 +136,7 @@ export default function AdminView() {
 
       {/* Success flash */}
       {successMsg && (
-        <div className="mb-6 flex items-center gap-3 border-2 border-[var(--navigo-green)] bg-[var(--navigo-green)]/10 px-4 py-3">
+        <div className="mb-6 flex items-center gap-3 border border-[var(--navigo-green)] bg-[var(--navigo-green)]/10 px-4 py-3 rounded-2xl glass-2">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--navigo-green)" strokeWidth="2.5">
             <polyline points="20 6 9 17 4 12"/>
           </svg>
@@ -146,9 +147,9 @@ export default function AdminView() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
         {stats.map((s) => (
-          <div key={s.label} className="border-2 border-[#111111] dark:border-[#333333] p-4 bg-white dark:bg-[#141414]">
-            <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-1">{s.label}</p>
-            <p className="font-display text-3xl font-bold" style={{ color: s.color }}>
+          <div key={s.label} className="glass-card border border-[var(--glass-border)] p-4 rounded-2xl">
+            <p className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1">{s.label}</p>
+            <p className="font-display text-3xl font-bold" style={{ color: s.color, textShadow: `0 0 10px ${s.color}66` }}>
               {String(s.value).padStart(2, '0')}
             </p>
           </div>
@@ -157,8 +158,8 @@ export default function AdminView() {
 
       {/* Active announcements banner */}
       {announcements.length > 0 && (
-        <div className="mb-6 border-2 border-[#FF4757] p-4 bg-[#FF4757]/10">
-          <p className="font-mono text-[9px] text-[#FF4757] uppercase tracking-widest mb-2">
+        <div className="mb-6 border border-[#FF4757] p-4 bg-[#FF4757]/10 rounded-2xl glass-2">
+          <p className="font-mono text-[9px] text-[#FF4757] uppercase tracking-widest mb-2 font-bold">
             {announcements.length} Active Broadcast{announcements.length > 1 ? 's' : ''}
           </p>
           <div className="flex flex-col gap-2">
@@ -179,15 +180,15 @@ export default function AdminView() {
       )}
 
       {/* Tabs */}
-      <div className="flex border-b-2 border-[#111111] dark:border-[#333333] mb-6 overflow-x-auto scrollbar-hide">
+      <div className="flex border-b border-[var(--glass-border)] mb-6 overflow-x-auto scrollbar-hide gap-2 pb-2">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`font-mono text-xs uppercase tracking-wider px-5 py-3 whitespace-nowrap border-b-2 -mb-[2px] transition-colors ${
+            className={`font-mono text-[10px] uppercase tracking-wider px-4 py-2 rounded-full whitespace-nowrap transition-all duration-300 ${
               activeTab === tab.id
-                ? 'border-[var(--navigo-yellow)] text-[#111111] dark:text-white font-bold'
-                : 'border-transparent text-gray-400 hover:text-[#111111] dark:hover:text-white'
+                ? 'bg-[var(--gold)] text-white shadow-[var(--shadow-gold)] font-bold scale-105'
+                : 'glass-btn glass-btn-ghost text-[var(--text-muted)] hover:bg-[var(--glass-2)] hover:text-[var(--text-primary)] hover:scale-105'
             }`}
           >
             {tab.label}
@@ -197,22 +198,47 @@ export default function AdminView() {
 
       {/* ── Events Tab ── */}
       {activeTab === 'events' && (
-        <div className="border-2 border-[#111111] dark:border-[#333333]">
-          <div className="flex items-center justify-between px-5 py-4 border-b-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#1A1A1A]">
+        <div className="glass-card rounded-2xl overflow-hidden border border-[var(--glass-border)] mb-6 shadow-lg">
+          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 px-6 py-4.5 border-b border-[var(--glass-border)] glass-2">
             <div>
-              <h2 className="font-display text-xl font-bold uppercase">Events Management</h2>
+              <h2 className="font-display text-xl font-bold uppercase tracking-tight text-[var(--text-primary)]">
+                Events Management
+              </h2>
               <p className="font-mono text-[10px] text-gray-500 mt-0.5">{events.length} events in system</p>
             </div>
-            <button
-              onClick={() => setShowAddEvent(!showAddEvent)}
-              className="btn-primary text-xs py-2 px-4"
-            >
-              {showAddEvent ? '✕ Cancel' : '+ Add Event'}
-            </button>
+
+            {/* Bar Pencil Pill Dock & Button */}
+            <div className="p-1 rounded-full glass-1 border border-[var(--glass-border-strong)] shadow-sm shrink-0 mr-1 flex items-center bg-black/5 dark:bg-white/5">
+              <button
+                onClick={() => setShowAddEvent(!showAddEvent)}
+                className="group flex items-center gap-2 px-5 py-2 rounded-full font-bold text-xs tracking-wide text-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
+                style={{
+                  background: showAddEvent
+                    ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
+                    : 'linear-gradient(135deg, #007AFF 0%, #0056B3 100%)',
+                  boxShadow: showAddEvent
+                    ? '0 4px 14px rgba(239, 68, 68, 0.4)'
+                    : '0 4px 14px rgba(0, 122, 255, 0.4)',
+                }}
+                aria-label={showAddEvent ? 'Cancel adding event' : 'Add event'}
+              >
+                {showAddEvent ? (
+                  <>
+                    <X size={14} className="shrink-0 transition-transform duration-200 group-hover:rotate-90" />
+                    <span>Cancel</span>
+                  </>
+                ) : (
+                  <>
+                    <Pencil size={13} className="shrink-0 transition-transform duration-300 group-hover:-rotate-12" />
+                    <span>+ Add Event</span>
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {showAddEvent && (
-            <div className="p-5 border-b-2 border-[var(--navigo-yellow)] bg-[var(--navigo-yellow)]/5">
+            <div className="p-5 border-b border-[var(--glass-border)] glass-1">
               <h3 className="font-mono text-xs uppercase tracking-wider text-gray-500 mb-4">New Event</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -221,7 +247,7 @@ export default function AdminView() {
                 </div>
                 <div>
                   <label className="font-mono text-[9px] text-gray-400 uppercase tracking-wider block mb-1">Category</label>
-                  <select value={newEvent.category} onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value })} className="input-field appearance-none cursor-pointer">
+                  <select value={newEvent.category} onChange={(e) => setNewEvent({ ...newEvent, category: e.target.value })} className="input-field glass-select appearance-none cursor-pointer">
                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
@@ -235,7 +261,7 @@ export default function AdminView() {
                 </div>
                 <div>
                   <label className="font-mono text-[9px] text-gray-400 uppercase tracking-wider block mb-1">Venue</label>
-                  <select value={newEvent.venue} onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })} className="input-field appearance-none cursor-pointer">
+                  <select value={newEvent.venue} onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })} className="input-field glass-select appearance-none cursor-pointer">
                     {BUILDINGS.filter((b) => b.type !== 'gate').map((b) => <option key={b.id} value={b.id}>{b.label}</option>)}
                   </select>
                 </div>
@@ -289,19 +315,19 @@ export default function AdminView() {
 
       {/* ── Room Changes Tab ── */}
       {activeTab === 'rooms' && (
-        <div className="border-2 border-[#111111] dark:border-[#333333]">
-          <div className="px-5 py-4 border-b-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#1A1A1A]">
-            <h2 className="font-display text-xl font-bold uppercase">Room Change</h2>
+        <div className="glass-card rounded-2xl overflow-hidden border border-[var(--glass-border)] mb-6 shadow-lg">
+          <div className="px-6 py-4.5 border-b border-[var(--glass-border)] glass-2">
+            <h2 className="font-display text-xl font-bold uppercase tracking-tight text-[var(--text-primary)]">Room Change</h2>
             <p className="font-mono text-[10px] text-gray-500 mt-0.5">Reassign a class to a different room — propagates to Classes, Rooms, and Timetable pages</p>
           </div>
-          <div className="p-5">
+          <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
                 <label className="font-mono text-[9px] text-gray-400 uppercase tracking-wider block mb-1">Class</label>
                 <select
                   value={roomChangeClass}
                   onChange={(e) => { setRoomChangeClass(e.target.value); setRoomChangeConfirm(false); }}
-                  className="input-field appearance-none cursor-pointer"
+                  className="input-field glass-select appearance-none cursor-pointer"
                 >
                   <option value="">— Select Class —</option>
                   {CLASSES.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -312,7 +338,7 @@ export default function AdminView() {
                 <select
                   value={roomChangeNewRoom}
                   onChange={(e) => { setRoomChangeNewRoom(e.target.value); setRoomChangeConfirm(false); }}
-                  className="input-field appearance-none cursor-pointer"
+                  className="input-field glass-select appearance-none cursor-pointer"
                 >
                   <option value="">— Select Room —</option>
                   {ROOMS.map((r) => <option key={r.id} value={r.id}>{r.number} — {r.building} ({r.type})</option>)}
@@ -321,22 +347,22 @@ export default function AdminView() {
             </div>
 
             {roomChangeClass && roomChangeNewRoom && !roomChangeConfirm && (
-              <div className="border-2 border-[var(--navigo-yellow)] bg-[var(--navigo-yellow)]/5 p-4 mb-4">
-                <p className="font-mono text-xs mb-3">
+              <div className="rounded-2xl border border-[var(--gold)]/30 bg-[var(--gold)]/10 p-4 mb-4">
+                <p className="font-mono text-xs mb-3 text-[var(--text-primary)]">
                   <span className="font-bold">{getClassById(roomChangeClass)?.name}</span>
                   {' → '}
                   <span className="font-bold">{getRoomById(roomChangeNewRoom)?.number}</span>
                   , effective immediately
                 </p>
                 <div className="flex gap-3">
-                  <button onClick={() => setRoomChangeConfirm(true)} className="btn-primary text-xs py-2 px-5">CONFIRM</button>
-                  <button onClick={() => { setRoomChangeClass(''); setRoomChangeNewRoom(''); }} className="btn-secondary text-xs py-2 px-4">CANCEL</button>
+                  <button onClick={() => setRoomChangeConfirm(true)} className="glass-btn glass-btn-primary rounded-full text-xs py-2 px-5 font-bold">CONFIRM</button>
+                  <button onClick={() => { setRoomChangeClass(''); setRoomChangeNewRoom(''); }} className="glass-btn glass-btn-ghost rounded-full text-xs py-2 px-4">CANCEL</button>
                 </div>
               </div>
             )}
 
             {roomChangeConfirm && (
-              <button onClick={handleRoomChange} className="btn-green text-xs py-2 px-6">
+              <button onClick={handleRoomChange} className="glass-btn glass-btn-primary rounded-full text-xs py-2.5 px-6 font-bold shadow-md">
                 Apply Room Change
               </button>
             )}
@@ -344,18 +370,18 @@ export default function AdminView() {
             {/* Active overrides */}
             {Object.keys(roomOverrides).length > 0 && (
               <div className="mt-6">
-                <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-2">Active Room Overrides</p>
-                <div className="border-2 border-[#111111] dark:border-[#333333] divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
+                <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-2 font-semibold">Active Room Overrides</p>
+                <div className="rounded-2xl border border-[var(--glass-border)] overflow-hidden divide-y divide-[var(--glass-border)] glass-1">
                   {Object.entries(roomOverrides).map(([classId, roomId]) => {
                     const cls = getClassById(classId);
                     const room = getRoomById(roomId);
                     return (
-                      <div key={classId} className="flex items-center justify-between px-4 py-3 bg-white dark:bg-[#141414]">
+                      <div key={classId} className="flex items-center justify-between px-4 py-3">
                         <div>
-                          <span className="font-bold text-sm">{cls?.shortName}</span>
+                          <span className="font-bold text-sm text-[var(--text-primary)]">{cls?.shortName}</span>
                           <span className="font-mono text-xs text-gray-400 ml-2">→ {room?.number}</span>
                         </div>
-                        <span className="font-mono text-[9px] px-1.5 py-0.5 bg-[var(--navigo-yellow)]/20 text-[var(--navigo-yellow)]">ACTIVE</span>
+                        <span className="font-mono text-[9px] px-2 py-0.5 rounded-full bg-[var(--gold)]/20 text-[var(--gold)] font-bold">ACTIVE</span>
                       </div>
                     );
                   })}
@@ -368,19 +394,19 @@ export default function AdminView() {
 
       {/* ── Timetable Tab ── */}
       {activeTab === 'timetable' && (
-        <div className="border-2 border-[#111111] dark:border-[#333333]">
-          <div className="px-5 py-4 border-b-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#1A1A1A]">
-            <h2 className="font-display text-xl font-bold uppercase">Timetable Reschedule</h2>
+        <div className="glass-card rounded-2xl overflow-hidden border border-[var(--glass-border)] mb-6 shadow-lg">
+          <div className="px-6 py-4.5 border-b border-[var(--glass-border)] glass-2">
+            <h2 className="font-display text-xl font-bold uppercase tracking-tight text-[var(--text-primary)]">Timetable Reschedule</h2>
             <p className="font-mono text-[10px] text-gray-500 mt-0.5">Override a specific timetable slot&apos;s time or room</p>
           </div>
-          <div className="p-5">
+          <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div className="sm:col-span-2">
                 <label className="font-mono text-[9px] text-gray-400 uppercase tracking-wider block mb-1">Select Slot</label>
                 <select
                   value={ttSlotId}
                   onChange={(e) => { setTtSlotId(e.target.value); setTtConfirm(false); }}
-                  className="input-field appearance-none cursor-pointer"
+                  className="input-field glass-select appearance-none cursor-pointer"
                 >
                   <option value="">— Select a timetable slot —</option>
                   {TIMETABLE.map((t) => {
@@ -410,7 +436,7 @@ export default function AdminView() {
                   </div>
                   <div>
                     <label className="font-mono text-[9px] text-gray-400 uppercase tracking-wider block mb-1">New Room (optional)</label>
-                    <select value={ttNewRoom} onChange={(e) => setTtNewRoom(e.target.value)} className="input-field appearance-none cursor-pointer">
+                    <select value={ttNewRoom} onChange={(e) => setTtNewRoom(e.target.value)} className="input-field glass-select appearance-none cursor-pointer">
                       <option value="">— Keep current room —</option>
                       {ROOMS.map((r) => <option key={r.id} value={r.id}>{r.number} — {r.building}</option>)}
                     </select>
@@ -420,42 +446,42 @@ export default function AdminView() {
             </div>
 
             {ttSlotId && (ttNewStart || ttNewEnd || ttNewRoom) && !ttConfirm && (
-              <div className="border-2 border-[var(--navigo-yellow)] bg-[var(--navigo-yellow)]/5 p-4 mb-4">
-                <p className="font-mono text-xs mb-3">
+              <div className="rounded-2xl border border-[var(--gold)]/30 bg-[var(--gold)]/10 p-4 mb-4">
+                <p className="font-mono text-xs mb-3 text-[var(--text-primary)]">
                   Reschedule <span className="font-bold">{selectedSlot?.subject}</span>
                   {ttNewStart ? ` to ${ttNewStart}` : ''}{ttNewEnd ? `–${ttNewEnd}` : ''}
                   {ttNewRoom ? `, room → ${getRoomById(ttNewRoom)?.number}` : ''}
                   , effective immediately
                 </p>
                 <div className="flex gap-3">
-                  <button onClick={() => setTtConfirm(true)} className="btn-primary text-xs py-2 px-5">CONFIRM</button>
-                  <button onClick={() => { setTtSlotId(''); setTtNewStart(''); setTtNewEnd(''); setTtNewRoom(''); }} className="btn-secondary text-xs py-2 px-4">CANCEL</button>
+                  <button onClick={() => setTtConfirm(true)} className="glass-btn glass-btn-primary rounded-full text-xs py-2 px-5 font-bold">CONFIRM</button>
+                  <button onClick={() => { setTtSlotId(''); setTtNewStart(''); setTtNewEnd(''); setTtNewRoom(''); }} className="glass-btn glass-btn-ghost rounded-full text-xs py-2 px-4">CANCEL</button>
                 </div>
               </div>
             )}
 
             {ttConfirm && (
-              <button onClick={handleTimetableOverride} className="btn-green text-xs py-2 px-6">
+              <button onClick={handleTimetableOverride} className="glass-btn glass-btn-primary rounded-full text-xs py-2.5 px-6 font-bold shadow-md">
                 Apply Reschedule
               </button>
             )}
 
             {Object.keys(timetableOverrides).length > 0 && (
               <div className="mt-6">
-                <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-2">Active Timetable Overrides</p>
-                <div className="border-2 border-[#111111] dark:border-[#333333] divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
+                <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-2 font-semibold">Active Timetable Overrides</p>
+                <div className="rounded-2xl border border-[var(--glass-border)] overflow-hidden divide-y divide-[var(--glass-border)] glass-1">
                   {Object.entries(timetableOverrides).map(([slotId, changes]) => {
                     const slot = TIMETABLE.find((t) => t.id === slotId);
                     return (
-                      <div key={slotId} className="flex items-center justify-between px-4 py-3 bg-white dark:bg-[#141414]">
+                      <div key={slotId} className="flex items-center justify-between px-4 py-3">
                         <div>
-                          <span className="font-bold text-sm">{slot?.subject}</span>
+                          <span className="font-bold text-sm text-[var(--text-primary)]">{slot?.subject}</span>
                           <span className="font-mono text-xs text-gray-400 ml-2">
                             {changes.startTime || slot?.startTime}–{changes.endTime || slot?.endTime}
                             {changes.roomId ? ` → ${getRoomById(changes.roomId)?.number}` : ''}
                           </span>
                         </div>
-                        <span className="font-mono text-[9px] px-1.5 py-0.5 bg-[var(--navigo-yellow)]/20 text-[var(--navigo-yellow)]">OVERRIDDEN</span>
+                        <span className="font-mono text-[9px] px-2 py-0.5 rounded-full bg-[var(--gold)]/20 text-[var(--gold)] font-bold">OVERRIDDEN</span>
                       </div>
                     );
                   })}
@@ -468,12 +494,12 @@ export default function AdminView() {
 
       {/* ── Announcements Tab ── */}
       {activeTab === 'announce' && (
-        <div className="border-2 border-[#111111] dark:border-[#333333]">
-          <div className="px-5 py-4 border-b-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#1A1A1A]">
-            <h2 className="font-display text-xl font-bold uppercase">Broadcast Announcement</h2>
+        <div className="glass-card rounded-2xl overflow-hidden border border-[var(--glass-border)] mb-6 shadow-lg">
+          <div className="px-6 py-4.5 border-b border-[var(--glass-border)] glass-2">
+            <h2 className="font-display text-xl font-bold uppercase tracking-tight text-[var(--text-primary)]">Broadcast Announcement</h2>
             <p className="font-mono text-[10px] text-gray-500 mt-0.5">Message appears in the marquee ticker and dashboard banner across all pages</p>
           </div>
-          <div className="p-5">
+          <div className="p-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
               <div className="sm:col-span-2">
                 <label className="font-mono text-[9px] text-gray-400 uppercase tracking-wider block mb-1">Message *</label>
@@ -488,28 +514,28 @@ export default function AdminView() {
               </div>
               <div>
                 <label className="font-mono text-[9px] text-gray-400 uppercase tracking-wider block mb-1">Severity</label>
-                <select value={annSeverity} onChange={(e) => setAnnSeverity(e.target.value)} className="input-field appearance-none cursor-pointer">
+                <select value={annSeverity} onChange={(e) => setAnnSeverity(e.target.value)} className="input-field glass-select appearance-none cursor-pointer">
                   {SEVERITIES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
             </div>
-            <button onClick={handleAddAnnouncement} disabled={!annText.trim()} className="btn-primary text-xs py-2 px-6 disabled:opacity-40">
+            <button onClick={handleAddAnnouncement} disabled={!annText.trim()} className="glass-btn glass-btn-primary rounded-full text-xs py-2.5 px-6 font-bold shadow-md disabled:opacity-40">
               Broadcast Now
             </button>
 
             {announcements.length > 0 && (
               <div className="mt-6">
-                <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-2">Live Broadcasts ({announcements.length})</p>
-                <div className="border-2 border-[#FF4757] divide-y divide-[#FF4757]/30">
+                <p className="font-mono text-[9px] text-gray-500 uppercase tracking-widest mb-2 font-semibold">Live Broadcasts ({announcements.length})</p>
+                <div className="rounded-2xl border border-red-500/30 overflow-hidden divide-y divide-red-500/20 bg-red-500/5">
                   {announcements.map((a) => (
-                    <div key={a.id} className="flex items-center justify-between px-4 py-3 bg-[#FF4757]/5">
+                    <div key={a.id} className="flex items-center justify-between px-4 py-3">
                       <div>
-                        <span className="font-mono text-[9px] px-1.5 py-0.5 border border-[#FF4757] text-[#FF4757] mr-2">{a.severity}</span>
-                        <span className="font-mono text-sm">{a.text}</span>
+                        <span className="font-mono text-[9px] px-2 py-0.5 rounded-full border border-red-500 text-red-500 mr-2 font-bold">{a.severity}</span>
+                        <span className="font-mono text-sm text-[var(--text-primary)]">{a.text}</span>
                       </div>
                       <button
                         onClick={() => removeAnnouncement(a.id)}
-                        className="font-mono text-[9px] px-2 py-0.5 border border-[#FF4757] text-[#FF4757] hover:bg-[#FF4757] hover:text-white transition-colors ml-3 shrink-0"
+                        className="font-mono text-[9px] px-2.5 py-1 rounded-full border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-colors ml-3 shrink-0 font-bold"
                       >
                         REVOKE
                       </button>
@@ -520,7 +546,7 @@ export default function AdminView() {
             )}
 
             {announcements.length === 0 && (
-              <div className="mt-6 border-2 border-dashed border-[#E5E7EB] dark:border-[#2A2A2A] p-8 text-center">
+              <div className="mt-6 rounded-2xl border border-dashed border-[var(--glass-border)] p-8 text-center glass-1">
                 <p className="font-mono text-xs uppercase tracking-wider text-gray-400">No active broadcasts</p>
               </div>
             )}
@@ -532,19 +558,19 @@ export default function AdminView() {
       {activeTab === 'data' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Buildings */}
-          <div className="border-2 border-[#111111] dark:border-[#333333]">
-            <div className="px-4 py-3 border-b-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#1A1A1A]">
-              <h3 className="font-bold text-sm uppercase tracking-tight">Buildings</h3>
+          <div className="glass-card rounded-2xl overflow-hidden border border-[var(--glass-border)] shadow-lg">
+            <div className="px-5 py-3.5 border-b border-[var(--glass-border)] glass-2 flex justify-between items-center">
+              <h3 className="font-bold text-sm uppercase tracking-tight text-[var(--text-primary)]">Buildings</h3>
               <p className="font-mono text-[9px] text-gray-400">Read-only</p>
             </div>
-            <div className="divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
+            <div className="divide-y divide-[var(--glass-border)] glass-1 max-h-96 overflow-y-auto scrollbar-thin">
               {BUILDINGS.filter((b) => b.type !== 'gate').map((b) => (
-                <div key={b.id} className="flex items-center justify-between px-4 py-2.5">
+                <div key={b.id} className="flex items-center justify-between px-4 py-2.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                   <div>
-                    <p className="text-sm font-medium">{b.label}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{b.label}</p>
                     <p className="font-mono text-[9px] text-gray-500">{b.code} · {b.type}</p>
                   </div>
-                  <span className={`font-mono text-[9px] px-1.5 py-0.5 ${b.accessible ? 'text-[var(--navigo-green)]' : 'text-gray-400'}`}>
+                  <span className={`font-mono text-[9px] px-1.5 py-0.5 font-bold ${b.accessible ? 'text-emerald-500' : 'text-gray-400'}`}>
                     {b.accessible ? '♿ YES' : '♿ NO'}
                   </span>
                 </div>
@@ -553,16 +579,16 @@ export default function AdminView() {
           </div>
 
           {/* Faculty */}
-          <div className="border-2 border-[#111111] dark:border-[#333333]">
-            <div className="px-4 py-3 border-b-2 border-[#111111] dark:border-[#333333] bg-[#F7F5F0] dark:bg-[#1A1A1A]">
-              <h3 className="font-bold text-sm uppercase tracking-tight">Faculty</h3>
+          <div className="glass-card rounded-2xl overflow-hidden border border-[var(--glass-border)] shadow-lg">
+            <div className="px-5 py-3.5 border-b border-[var(--glass-border)] glass-2 flex justify-between items-center">
+              <h3 className="font-bold text-sm uppercase tracking-tight text-[var(--text-primary)]">Faculty</h3>
               <p className="font-mono text-[9px] text-gray-400">Read-only</p>
             </div>
-            <div className="divide-y divide-[#E5E7EB] dark:divide-[#2A2A2A]">
+            <div className="divide-y divide-[var(--glass-border)] glass-1 max-h-96 overflow-y-auto scrollbar-thin">
               {FACULTY.map((f) => (
-                <div key={f.id} className="flex items-center justify-between px-4 py-2.5">
+                <div key={f.id} className="flex items-center justify-between px-4 py-2.5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
                   <div>
-                    <p className="text-sm font-medium">{f.name}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{f.name}</p>
                     <p className="font-mono text-[9px] text-gray-500">{f.designation}</p>
                   </div>
                   <p className="font-mono text-[9px] text-gray-400 max-w-[120px] text-right truncate">{f.department}</p>

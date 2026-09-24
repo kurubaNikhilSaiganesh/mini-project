@@ -119,9 +119,9 @@ export default function TopBar({
         id="top-bar"
         className="pointer-events-auto flex items-center justify-between px-4 md:px-5 h-12 md:h-13 rounded-full transition-all duration-300"
         style={{
-          background: scrolled ? 'var(--glass-3)' : 'var(--glass-2)',
-          backdropFilter: scrolled ? 'blur(24px)' : 'blur(16px)',
-          WebkitBackdropFilter: scrolled ? 'blur(24px)' : 'blur(16px)',
+          background: scrolled ? 'var(--glass-4)' : 'var(--glass-2)',
+          backdropFilter: scrolled ? 'blur(12px)' : 'blur(8px)',
+          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'blur(8px)',
           border: `1px solid ${scrolled ? 'var(--glass-border-strong)' : 'var(--glass-border)'}`,
           boxShadow: scrolled ? 'var(--shadow-md)' : 'var(--shadow-xs)',
         }}
