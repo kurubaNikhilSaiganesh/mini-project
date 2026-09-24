@@ -360,8 +360,6 @@
     background-position: -200% 0;
   }
 
-  /* In dark mode the shimmer looks like an unintended white flash — hide it */
-  .dark .glass-btn-primary::after { display: none; }
 
   .glass-btn-primary:active {
     transform: scale(0.97);
@@ -404,8 +402,6 @@
     background-position: -200% 0;
   }
 
-  /* In dark mode the shimmer looks like an unintended white flash — hide it */
-  .dark .glass-btn-blue::after { display: none; }
 
   .glass-btn-blue:active {
     transform: scale(0.97);
@@ -1190,8 +1186,6 @@
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* In dark mode the white shimmer sweep looks like cursor reflection — disable it */
-.dark .magic-hover::after { display: none; }
 .dark .magic-hover:hover { border-color: var(--glass-border); }
 
 .glass-select {
