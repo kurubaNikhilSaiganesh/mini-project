@@ -146,6 +146,9 @@ export default function App() {
   const navigateTo = useCallback((view) => {
     setActiveView(view);
     setMobileMenuOpen(false);
+    if (view === 'today') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
   }, []);
 
   const ctx = {

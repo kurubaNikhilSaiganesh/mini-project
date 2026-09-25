@@ -191,11 +191,9 @@ function StudentDashboard() {
         without needing blur-through from lower layers.
       */}
       <div
-        className="rounded-3xl p-6 md:p-10 relative overflow-hidden"
+        className="glass-card magic-hover rounded-3xl p-6 md:p-10 relative overflow-hidden"
         style={{
           border: '1px solid var(--glass-border)',
-          boxShadow: 'var(--shadow-sm), inset 0 1px 1px rgba(255,255,255,0.5)',
-          background: 'var(--bg-elevated)',
           isolation: 'isolate',
         }}
       >
@@ -529,11 +527,9 @@ function StaffDashboard() {
 
       {/* ── Staff Hero / Welcome ── */}
       <div
-        className="rounded-3xl p-6 md:p-10 relative overflow-hidden"
+        className="glass-card magic-hover rounded-3xl p-6 md:p-10 relative overflow-hidden"
         style={{
           border: '1px solid var(--glass-border)',
-          boxShadow: 'var(--shadow-sm), inset 0 1px 1px rgba(255,255,255,0.5)',
-          background: 'var(--bg-elevated)',
           isolation: 'isolate',
         }}
       >
