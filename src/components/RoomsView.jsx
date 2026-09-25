@@ -69,7 +69,7 @@ export default function RoomsView() {
 
       {/* Centered Filters */}
       <div className="flex flex-col items-center gap-4 mb-10">
-        <div className="flex flex-nowrap justify-start md:justify-center gap-2 items-center overflow-x-auto scrollbar-hide py-2 px-4 max-w-full w-full snap-x snap-mandatory overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+        <div className="flex flex-wrap justify-center gap-2 items-center py-1 max-w-full w-full">
           <button
             onClick={() => setActiveBuilding('all')}
             className={`text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${
@@ -95,7 +95,7 @@ export default function RoomsView() {
           ))}
         </div>
 
-        <div className="flex flex-nowrap justify-start md:justify-center gap-2 items-center overflow-x-auto scrollbar-hide py-2 px-4 max-w-full w-full snap-x snap-mandatory overscroll-x-contain [-webkit-overflow-scrolling:touch]">
+        <div className="flex flex-wrap justify-center gap-2 items-center py-1 max-w-full w-full">
           <button
             onClick={() => setActiveType('all')}
             className={`text-xs font-semibold px-4 py-2 rounded-full transition-all duration-300 select-none whitespace-nowrap snap-start ${

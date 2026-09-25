@@ -117,13 +117,7 @@ export default function RouteController() {
     <div
       className="glass-card glass-2 rounded-3xl p-6 md:p-8 border border-[var(--glass-border-strong)] shadow-xl relative"
     >
-      {/* Subtle ambient light restricted to container bounds */}
-      <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none z-0">
-        <div
-          className="absolute -top-16 -left-16 w-64 h-64 rounded-full opacity-15 blur-3xl"
-          style={{ background: 'var(--gold)' }}
-        />
-      </div>
+      {/* Ambient light restricted to container bounds removed to prevent WebKit scroll bleed */}
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6 relative z-10">

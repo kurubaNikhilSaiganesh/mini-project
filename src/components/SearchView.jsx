@@ -110,12 +110,12 @@ function ResultItem({ item, onNavigate }) {
 }
 
 const QUICK_ACTIONS = [
-  { label: 'Exam Seating', view: 'seating', icon: '📍' },
-  { label: 'Timetable',    view: 'timetable', icon: '⏰' },
-  { label: 'Campus Map',   view: 'route', icon: '🗺️' },
-  { label: 'Faculty',      view: 'faculty', icon: '👤' },
-  { label: 'Events',       view: 'events', icon: '⭐' },
-  { label: 'Rooms',        view: 'rooms', icon: '🏛️' },
+  { label: 'Exam Seating', view: 'seating', icon: '🎯' },
+  { label: 'Timetable',    view: 'timetable', icon: '🕐' },
+  { label: 'Campus Map',   view: 'route', icon: '🧭' },
+  { label: 'Faculty',      view: 'faculty', icon: '🎓' },
+  { label: 'Events',       view: 'events', icon: '⚡' },
+  { label: 'Rooms',        view: 'rooms', icon: '🏗️' },
 ];
 
 export default function SearchView() {
