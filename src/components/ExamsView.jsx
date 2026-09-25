@@ -37,12 +37,12 @@ function ExamScheduleRow({ item }) {
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <div
           className="text-center shrink-0 w-12 h-12 flex flex-col items-center justify-center rounded-lg"
-          style={{ background: 'var(--gold-light)' }}
+          style={{ background: 'rgba(245, 158, 11, 0.12)' }}
         >
-          <p className="font-mono font-bold text-base leading-none" style={{ color: 'var(--gold)' }}>
+          <p className="font-mono font-bold text-base leading-none" style={{ color: '#D97706' }}>
             {new Date(item.date).getDate()}
           </p>
-          <p className="font-mono text-[8px] uppercase tracking-wide" style={{ color: 'var(--gold)' }}>
+          <p className="font-mono text-[8px] uppercase tracking-wide" style={{ color: '#D97706' }}>
             {new Date(item.date).toLocaleDateString('en-US', { month: 'short' })}
           </p>
         </div>
@@ -76,9 +76,17 @@ function ExamCard({ exam, onFindSeat }) {
 
   return (
     <div
-      className="glass-card overflow-hidden"
+      className="rounded-2xl overflow-hidden transition-all duration-300"
       style={{
+        background: 'var(--glass-1)',
+        backdropFilter: 'var(--blur-md)',
+        WebkitBackdropFilter: 'var(--blur-md)',
         border: isOngoing ? '1px solid rgba(8, 127, 69, 0.3)' : '1px solid var(--glass-border)',
+        boxShadow: 'var(--shadow-sm)',
+        isolation: 'isolate',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)',
       }}
     >
       {/* Exam header */}
@@ -86,13 +94,13 @@ function ExamCard({ exam, onFindSeat }) {
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <GlassBadge variant={exam.type === 'MID' ? 'blue' : 'gold'}>{exam.type}</GlassBadge>
+              <GlassBadge variant="gold">{exam.type}</GlassBadge>
               <GlassBadge variant={isOngoing ? 'green' : isUpcoming ? 'gold' : 'gray'}>
                 {isOngoing ? 'Ongoing' : isUpcoming ? `In ${daysUntil}d` : 'Completed'}
               </GlassBadge>
             </div>
             <h3
-              className="font-display font-bold text-lg leading-tight"
+              className="font-display font-bold text-lg md:text-xl leading-tight"
               style={{ color: 'var(--text-primary)' }}
             >
               {exam.name}
@@ -106,12 +114,12 @@ function ExamCard({ exam, onFindSeat }) {
           {isUpcoming && (
             <div
               className="text-center px-4 py-2 rounded-lg shrink-0"
-              style={{ background: 'var(--gold-light)', border: '1px solid rgba(244,180,0,0.2)' }}
+              style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.25)' }}
             >
-              <p className="font-display font-black text-2xl leading-none" style={{ color: 'var(--gold)' }}>
+              <p className="font-display font-black text-2xl leading-none" style={{ color: '#D97706' }}>
                 {daysUntil}
               </p>
-              <p className="font-mono text-[8px] uppercase tracking-wider mt-0.5" style={{ color: 'var(--gold)' }}>
+              <p className="font-mono text-[8px] uppercase tracking-wider mt-0.5" style={{ color: '#D97706' }}>
                 days
               </p>
             </div>
@@ -189,7 +197,7 @@ export default function ExamsView() {
     : EXAMS.filter((e) => e.type === activeTab);
 
   return (
-    <div className="px-4 md:px-8 py-8 max-w-4xl mx-auto page-enter">
+    <div className="px-3 sm:px-4 md:px-8 py-6 sm:py-8 max-w-4xl mx-auto page-enter w-full">
       {/* Header */}
       <div className="mb-8">
         <p className="font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--gold)' }}>
@@ -217,11 +225,19 @@ export default function ExamsView() {
 
       {/* Quick seating shortcut */}
       <div
-        className="glass-card p-4 flex items-center justify-between gap-4 mb-6"
-        style={{ background: 'var(--gold-light)', border: '1px solid rgba(244,180,0,0.2)' }}
+        className="p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6 rounded-2xl backdrop-blur-md"
+        style={{ 
+          background: 'rgba(245, 158, 11, 0.08)', 
+          border: '1px solid rgba(245, 158, 11, 0.2)', 
+          boxShadow: 'none',
+          isolation: 'isolate',
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
+          transform: 'translateZ(0)',
+        }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 flex items-center justify-center rounded-lg" style={{ background: 'var(--gold)' }}>
+          <div className="w-10 h-10 flex items-center justify-center rounded-lg shrink-0" style={{ background: '#F59E0B' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5" strokeLinecap="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
             </svg>
@@ -233,7 +249,8 @@ export default function ExamsView() {
         </div>
         <button
           onClick={() => navigateTo('seating')}
-          className="glass-btn glass-btn-blue glass-btn-sm rounded-full shrink-0"
+          className="glass-btn glass-btn-sm rounded-full shrink-0 font-bold text-white w-full sm:w-auto"
+          style={{ background: '#F59E0B', boxShadow: '0 4px 14px rgba(245,158,11,0.3)' }}
         >
           Find My Seat
         </button>

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { PanelLeftClose, PanelLeftOpen, X } from 'lucide-react';
+import { AppContext } from '../context/AppContext';
 
 // ── Unique Futuristic High-Craft Icons ─────────────────────────────
 
@@ -121,35 +122,96 @@ const ICONS = {
 
 // ── Navigation items (grouped) ───────────────────────────────────
 
-const NAV_GROUPS = [
-  {
-    label: 'Campus',
-    items: [
-      { id: 'today', label: 'Home', icon: ICONS.today },
-      { id: 'route', label: 'Find a Route', icon: ICONS.route },
-      { id: 'directory', label: 'Campus Directory', icon: ICONS.directory },
-      { id: 'events', label: 'Events', icon: ICONS.events },
-      { id: 'notices', label: 'Notices', icon: ICONS.notices },
-    ],
-  },
-  {
-    label: 'Academic',
-    items: [
-      { id: 'timetable', label: 'Timetable', icon: ICONS.timetable },
-      { id: 'classes', label: 'Classes', icon: ICONS.classes },
-      { id: 'faculty', label: 'Faculty', icon: ICONS.faculty },
-      { id: 'rooms', label: 'Rooms', icon: ICONS.rooms },
-    ],
-  },
-  {
-    label: 'Examinations',
-    items: [
-      { id: 'exams', label: 'Exam Schedule', icon: ICONS.exams },
-      { id: 'seating', label: 'Exam Seating', icon: ICONS.seating },
-      { id: 'search', label: 'Search', icon: ICONS.search },
-    ],
-  },
-];
+const getNavGroups = (role) => {
+  if (role === 'staff') {
+    return [
+      {
+        label: 'Campus',
+        items: [
+          { id: 'today', label: 'Home', icon: ICONS.today },
+          { id: 'route', label: 'Find a Route', icon: ICONS.route },
+          { id: 'directory', label: 'Campus Directory', icon: ICONS.directory },
+          { id: 'notices', label: 'Notices', icon: ICONS.notices },
+        ],
+      },
+      {
+        label: 'My Work',
+        items: [
+          { id: 'timetable', label: 'My Timetable', icon: ICONS.timetable },
+          { id: 'classes', label: 'Next Class', icon: ICONS.classes },
+          { id: 'rooms', label: 'Assigned Rooms', icon: ICONS.rooms },
+        ],
+      },
+      {
+        label: 'Account',
+        items: [
+          { id: 'faculty', label: 'My Profile', icon: ICONS.faculty },
+        ],
+      },
+    ];
+  }
+
+  if (role === 'admin') {
+    return [
+      {
+        label: 'Campus',
+        items: [
+          { id: 'today', label: 'Home', icon: ICONS.today },
+          { id: 'route', label: 'Find a Route', icon: ICONS.route },
+          { id: 'directory', label: 'Campus Directory', icon: ICONS.directory },
+          { id: 'events', label: 'Events', icon: ICONS.events },
+          { id: 'notices', label: 'Notices', icon: ICONS.notices },
+        ],
+      },
+      {
+        label: 'Management',
+        items: [
+          { id: 'timetable', label: 'Timetables', icon: ICONS.timetable },
+          { id: 'classes', label: 'Classes', icon: ICONS.classes },
+          { id: 'faculty', label: 'Faculty', icon: ICONS.faculty },
+          { id: 'rooms', label: 'Rooms', icon: ICONS.rooms },
+        ],
+      },
+      {
+        label: 'Examinations (Admin)',
+        items: [
+          { id: 'exams', label: 'Manage Exams', icon: ICONS.exams },
+          { id: 'seating', label: 'Manage Seating', icon: ICONS.seating },
+        ],
+      },
+    ];
+  }
+
+  // default: student
+  return [
+    {
+      label: 'Campus',
+      items: [
+        { id: 'today', label: 'Home', icon: ICONS.today },
+        { id: 'route', label: 'Find a Route', icon: ICONS.route },
+        { id: 'directory', label: 'Campus Directory', icon: ICONS.directory },
+        { id: 'events', label: 'Events', icon: ICONS.events },
+        { id: 'notices', label: 'Notices', icon: ICONS.notices },
+      ],
+    },
+    {
+      label: 'Academic',
+      items: [
+        { id: 'timetable', label: 'Timetable', icon: ICONS.timetable },
+        { id: 'classes', label: 'Classes', icon: ICONS.classes },
+        { id: 'faculty', label: 'Faculty', icon: ICONS.faculty },
+        { id: 'rooms', label: 'Rooms', icon: ICONS.rooms },
+      ],
+    },
+    {
+      label: 'Examinations',
+      items: [
+        { id: 'exams', label: 'Exam Schedule', icon: ICONS.exams },
+        { id: 'seating', label: 'Exam Seating', icon: ICONS.seating },
+      ],
+    },
+  ];
+};
 
 // ── SidebarContent ───────────────────────────────────────────────
 
@@ -216,24 +278,24 @@ function SidebarContent({
         >
           {/* Moving liquid thumb */}
           <div
-            className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-full transition-transform duration-300"
+            className="absolute top-1 bottom-1 w-[calc(33.33%-4px)] rounded-full transition-transform duration-300"
             style={{
               left: 4,
-              transform: role === 'staff' ? 'translateX(100%)' : 'translateX(0)',
+              transform: role === 'staff' ? 'translateX(100%)' : role === 'admin' ? 'translateX(200%)' : 'translateX(0)',
               background: 'rgba(255, 255, 255, 0.15)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
             }}
           />
 
-          {['student', 'staff'].map((r) => {
+          {['student', 'staff', 'admin'].map((r) => {
             const isCurrent = role === r;
             return (
               <button
                 key={r}
                 type="button"
                 onClick={() => setRole(r)}
-                className="relative z-10 flex-1 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-full transition-colors duration-200 text-center"
+                className="relative z-10 flex-1 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full transition-colors duration-200 text-center"
                 style={{
                   color: isCurrent ? 'var(--gold)' : 'rgba(255,255,255,0.7)',
                   textShadow: isCurrent ? '0 0 12px var(--shadow-gold)' : 'none',
@@ -251,8 +313,17 @@ function SidebarContent({
       <nav
         className="flex-1 overflow-y-auto px-3.5 pt-2 pb-6 space-y-4 scrollbar-thin select-none relative"
         aria-label="Primary navigation"
+        onKeyDown={(e) => {
+          if (!['ArrowDown', 'ArrowUp'].includes(e.key)) return;
+          e.preventDefault();
+          const allBtns = Array.from(e.currentTarget.querySelectorAll('button[data-id]'));
+          const idx = allBtns.indexOf(document.activeElement);
+          if (idx === -1) { allBtns[0]?.focus(); return; }
+          const next = e.key === 'ArrowDown' ? allBtns[idx + 1] : allBtns[idx - 1];
+          next?.focus();
+        }}
       >
-        {NAV_GROUPS.map((group) => (
+        {getNavGroups(role).map((group) => (
           <div key={group.label}>
             <p className="nav-section-label select-none">{group.label}</p>
             <div className="space-y-1">
@@ -297,48 +368,49 @@ function SidebarContent({
           </div>
         ))}
 
-        {/* Administration */}
-        <div>
-          <p className="nav-section-label select-none">Administration</p>
-          <div className="space-y-1">
-            {(() => {
-              const isAdminActive = activeView === 'admin';
+        {role === 'admin' && (
+          <div>
+            <p className="nav-section-label select-none">Administration</p>
+            <div className="space-y-1">
+              {(() => {
+                const isAdminActive = activeView === 'admin';
 
-              return (
-                <button
-                  data-id="admin"
-                  onClick={() => {
-                    setActiveView('admin');
-                    if (isMobile && onClose) onClose();
-                  }}
-                  className={`w-full group flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-all duration-200 text-left relative ${
-                    isAdminActive
-                      ? 'bg-[var(--gold)]/15 dark:bg-[var(--gold)]/20 border border-[var(--gold)]/35 text-[var(--sidebar-text-active)] font-bold shadow-xs'
-                      : 'border border-transparent text-[var(--sidebar-text)] hover:text-[var(--sidebar-text-active)] hover:bg-black/5 dark:hover:bg-white/5 font-medium'
-                  }`}
-                  aria-current={isAdminActive ? 'page' : undefined}
-                >
-                  <span
-                    className="nav-icon transition-transform duration-200 group-hover:scale-110 shrink-0"
-                    style={{
-                      color: isAdminActive ? 'var(--gold)' : 'currentColor',
-                      filter: isAdminActive ? 'drop-shadow(0 0 6px var(--gold))' : 'none',
+                return (
+                  <button
+                    data-id="admin"
+                    onClick={() => {
+                      setActiveView('admin');
+                      if (isMobile && onClose) onClose();
                     }}
+                    className={`w-full group flex items-center gap-3 px-3.5 py-2.5 rounded-full transition-all duration-200 text-left relative ${
+                      isAdminActive
+                        ? 'bg-[var(--gold)]/15 dark:bg-[var(--gold)]/20 border border-[var(--gold)]/35 text-[var(--sidebar-text-active)] font-bold shadow-xs'
+                        : 'border border-transparent text-[var(--sidebar-text)] hover:text-[var(--sidebar-text-active)] hover:bg-black/5 dark:hover:bg-white/5 font-medium'
+                    }`}
+                    aria-current={isAdminActive ? 'page' : undefined}
                   >
-                    {ICONS.admin}
-                  </span>
-                  <span className="text-[13px] tracking-tight">Admin Panel</span>
-                  <span
-                    className="ml-auto font-mono text-[8px] px-2 py-0.5 font-bold tracking-wide rounded-full shadow-sm"
-                    style={{ background: 'var(--gold)', color: '#ffffff' }}
-                  >
-                    ADMIN
-                  </span>
-                </button>
-              );
-            })()}
+                    <span
+                      className="nav-icon transition-transform duration-200 group-hover:scale-110 shrink-0"
+                      style={{
+                        color: isAdminActive ? 'var(--gold)' : 'currentColor',
+                        filter: isAdminActive ? 'drop-shadow(0 0 6px var(--gold))' : 'none',
+                      }}
+                    >
+                      {ICONS.admin}
+                    </span>
+                    <span className="text-[13px] tracking-tight">Admin Settings</span>
+                    <span
+                      className="ml-auto font-mono text-[8px] px-2 py-0.5 font-bold tracking-wide rounded-full shadow-sm"
+                      style={{ background: 'var(--gold)', color: '#ffffff' }}
+                    >
+                      ADMIN
+                    </span>
+                  </button>
+                );
+              })()}
+            </div>
           </div>
-        </div>
+        )}
       </nav>
 
       {/* User profile pill */}
@@ -352,10 +424,10 @@ function SidebarContent({
           </div>
           <div className="overflow-hidden min-w-0 pr-2">
             <p className="text-[12.5px] font-semibold text-[var(--sidebar-text-active)] truncate leading-tight">
-              Aarav Kannan
+              {role === 'staff' ? 'Dr. Priya Sharma' : role === 'admin' ? 'System Admin' : 'Aarav Kannan'}
             </p>
             <p className="font-mono text-[8.5px] truncate uppercase tracking-wider text-[var(--sidebar-text)]">
-              {role === 'staff' ? 'Staff · ALTS' : 'BCA · Year 2'}
+              {role === 'staff' ? 'Professor · CSE' : role === 'admin' ? 'ALTS IT Dept' : 'BCA · Year 2'}
             </p>
           </div>
         </div>
@@ -374,7 +446,7 @@ export default function Sidebar({
   collapsed = false,
   setCollapsed = () => {},
 }) {
-  const [role, setRole] = useState('student');
+  const { userRole: role, setUserRole: setRole } = useContext(AppContext);
 
   return (
     <>

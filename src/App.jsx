@@ -29,6 +29,7 @@ export default function App() {
   const [activeView, setActiveView] = useState('today');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [userRole, setUserRole] = useState('student');
 
   const [selectedBuilding, setSelectedBuilding] = useState(null);
   const [fromNode, setFromNode] = useState('');
@@ -81,7 +82,7 @@ export default function App() {
     const handler = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        setCmdOpen(true);
+        if (userRole !== 'staff') setCmdOpen(true);
       }
       if (e.key === 'Escape') {
         setCmdOpen(false);
@@ -91,7 +92,7 @@ export default function App() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, []);
+  }, [userRole]);
 
   const addAnnouncement = useCallback((text, severity = 'ALERT') => {
     const id = `ann_${Date.now()}`;
@@ -164,6 +165,7 @@ export default function App() {
     locateOnMap,
     registerModal, setRegisterModal,
     mobileMenuOpen, setMobileMenuOpen,
+    userRole, setUserRole,
     // Shared data
     events, setEvents,
     classes, setClasses,
@@ -223,10 +225,21 @@ export default function App() {
               {activeView === 'classes'   && <ClassesView />}
               {activeView === 'faculty'   && <FacultyView />}
               {activeView === 'rooms'     && <RoomsView />}
-              {activeView === 'admin'     && <AdminView />}
-              {activeView === 'exams'     && <ExamsView />}
-              {activeView === 'seating'   && <SeatingView />}
-              {activeView === 'search'    && <SearchView />}
+              
+              {/* Role-protected routes */}
+              {activeView === 'admin' && (
+                userRole === 'admin' ? <AdminView /> : <UnauthorizedView />
+              )}
+              {activeView === 'exams' && (
+                (userRole === 'admin' || userRole === 'student') ? <ExamsView /> : <UnauthorizedView />
+              )}
+              {activeView === 'seating' && (
+                (userRole === 'admin' || userRole === 'student') ? <SeatingView /> : <UnauthorizedView />
+              )}
+              {activeView === 'search' && (
+                (userRole === 'admin' || userRole === 'student') ? <SearchView /> : <UnauthorizedView />
+              )}
+              
               {activeView === 'notices'   && <NoticesView />}
 
               {activeView === 'route' && (
@@ -261,5 +274,19 @@ export default function App() {
         )}
       </div>
     </AppContext.Provider>
+  );
+}
+
+function UnauthorizedView() {
+  return (
+    <div className="flex flex-col items-center justify-center h-full text-center p-8">
+      <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-4">
+        <span className="text-red-500 text-3xl font-display font-black">!</span>
+      </div>
+      <h2 className="font-display font-bold text-2xl text-[var(--text-primary)] mb-2">Access Restricted</h2>
+      <p className="text-[var(--text-secondary)] font-mono text-sm max-w-md mx-auto">
+        Your current role does not have permission to view this section.
+      </p>
+    </div>
   );
 }

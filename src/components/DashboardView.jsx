@@ -22,8 +22,35 @@ function getNextSlot(classId) {
   ).sort((a, b) => a.startTime.localeCompare(b.startTime))[0] || null;
 }
 
+// Staff slot helpers
+function getCurrentStaffSlot(facultyId) {
+  const now = new Date();
+  const hhmm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const today = getCurrentDay();
+  return TIMETABLE.find(
+    (t) => t.facultyId === facultyId && t.day === today && hhmm >= t.startTime && hhmm < t.endTime
+  );
+}
+
+function getNextStaffSlot(facultyId) {
+  const now = new Date();
+  const hhmm = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const today = getCurrentDay();
+  return TIMETABLE.filter(
+    (t) => t.facultyId === facultyId && t.day === today && t.startTime > hhmm
+  ).sort((a, b) => a.startTime.localeCompare(b.startTime))[0] || null;
+}
+
+function getStaffScheduleForToday(facultyId) {
+  const today = getCurrentDay();
+  return TIMETABLE.filter(
+    (t) => t.facultyId === facultyId && t.day === today
+  ).sort((a, b) => a.startTime.localeCompare(b.startTime));
+}
+
 // Default class context: CS-2A
 const USER_CLASS = 'cs_2a';
+const STAFF_USER = 'fac_002'; // Dr. Priya Sharma
 
 const CORE_SYSTEMS = [
   {
@@ -86,21 +113,26 @@ const WHAT_IT_SOLVES = [
   {
     q: 'Where is my class?',
     a: 'Real-time room numbers, building coordinates & floor levels linked live to the map.',
-    icon: '📍',
+    icon: '🎯',
   },
   {
     q: 'How do I get there?',
     a: 'Instant BFS pathfinding with turn-by-turn waypoints, walking distance, ETA, and ramp access.',
-    icon: '🗺️',
+    icon: '🧭',
   },
   {
     q: "What's on campus today?",
     a: 'Live events bulletin, interactive timetables, exam seating, and broadcast notices.',
-    icon: '📋',
+    icon: '⚡',
   },
 ];
 
 export default function DashboardView() {
+  const { userRole } = useContext(AppContext);
+  return userRole === 'staff' ? <StaffDashboard /> : <StudentDashboard />;
+}
+
+function StudentDashboard() {
   const { navigateTo, announcements, removeAnnouncement } = useContext(AppContext);
   const date = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -150,26 +182,29 @@ export default function DashboardView() {
       )}
 
       {/* ── Hero Glass Showcase ── */}
+      {/*
+        CRITICAL: Do NOT add backdrop-filter here. The Hero card must use a
+        solid background. If backdrop-filter is active on the Hero, the GPU
+        compositing layer will sample scrolled content (RouteController, etc.)
+        from behind and bleed it through as a white glow around the buttons.
+        The --bg-surface color is already textured enough to look premium
+        without needing blur-through from lower layers.
+      */}
       <div
-        className="glass-card glass-2 rounded-3xl p-6 md:p-10 relative overflow-hidden shadow-xl"
+        className="rounded-3xl p-6 md:p-10 relative overflow-hidden"
         style={{
           border: '1px solid var(--glass-border)',
+          boxShadow: 'var(--shadow-sm), inset 0 1px 1px rgba(255,255,255,0.5)',
+          background: 'var(--bg-elevated)',
+          isolation: 'isolate',
         }}
       >
-        {/* Ambient radial glow */}
-        <div
-          className="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none opacity-20 blur-3xl"
-          style={{ background: 'radial-gradient(circle, var(--gold) 0%, transparent 70%)' }}
-        />
-        <div
-          className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full pointer-events-none opacity-15 blur-3xl"
-          style={{ background: 'radial-gradient(circle, var(--green) 0%, transparent 70%)' }}
-        />
+        {/* Ambient background removed to prevent WebKit scroll bleed and glare artifacts */}
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
           <div className="max-w-xl">
-            {/* Live date pill */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-4 glass-1 border border-[var(--glass-border)] transition-all duration-300 cursor-default">
+            {/* Live date pill — no backdrop-filter (already inside Hero which is isolated) */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-4 border border-[var(--glass-border)] transition-all duration-300 cursor-default" style={{ background: 'rgba(0,0,0,0.04)' }}>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="font-mono text-[10px] font-semibold tracking-wider uppercase text-[var(--text-muted)]">
                 {date} · ALTS CAMPUS
@@ -198,8 +233,8 @@ export default function DashboardView() {
               </h1>
             </div>
 
-            <p className="mt-4 text-[var(--text-secondary)] text-sm md:text-base leading-relaxed">
-              Real-time campus wayfinding, dynamic class timetables, interactive floor directories, and live exam utilities — designed in fluid glass.
+            <p className="mt-4 text-[var(--text-secondary)] font-mono text-sm uppercase tracking-widest leading-relaxed">
+              "Time is the canvas of your day. Paint it well."
             </p>
           </div>
 
@@ -259,11 +294,7 @@ export default function DashboardView() {
           <div
             className="glass-card glass-2 rounded-3xl p-6 md:p-7 flex flex-col justify-between border border-[var(--glass-border-strong)] shadow-lg relative overflow-hidden"
           >
-            {/* Ambient accent blob */}
-            <div
-              className="absolute -top-12 -right-12 w-36 h-36 rounded-full opacity-15 blur-2xl pointer-events-none"
-              style={{ background: 'var(--gold)' }}
-            />
+            {/* Ambient accent blob removed to prevent WebKit scroll bleed */}
 
             <div>
               <div className="flex justify-between items-start mb-6">
@@ -367,15 +398,11 @@ export default function DashboardView() {
               onClick={() => navigateTo(sys.id)}
               className="glass-card rounded-3xl p-6 text-left flex flex-col justify-between group border border-[var(--glass-border)] hover:border-[var(--glass-border-strong)] hover:shadow-lg transition-all duration-200 relative overflow-hidden"
             >
-              {/* Subtle accent corner glow */}
-              <div
-                className="absolute top-0 right-0 w-24 h-24 rounded-full opacity-10 blur-xl pointer-events-none transition-opacity group-hover:opacity-25"
-                style={{ background: sys.color }}
-              />
+              {/* Ambient accent corner glow removed to prevent WebKit scroll bleed */}
 
               <div>
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`w-14 h-14 rounded-[1.25rem] liquid-glass-icon ${sys.bgClass} shadow-lg transition-transform group-hover:scale-110 duration-300`}>
+                  <div className={`w-14 h-14 rounded-[1.25rem] liquid-glass-icon ${sys.bgClass} shadow-lg`}>
                     <div className="w-[38px] h-[38px] rounded-full inner-glass-symbol flex items-center justify-center">
                       {sys.icon}
                     </div>
@@ -423,6 +450,263 @@ export default function DashboardView() {
           <span>View Campus Events</span>
           <ArrowRight size={12} />
         </button>
+      </div>
+    </div>
+  );
+}
+
+function StaffDashboard() {
+  const { navigateTo, announcements, removeAnnouncement } = useContext(AppContext);
+  const date = new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+  const [time, setTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+  const timeString = time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: false });
+
+  const currentSlot = getCurrentStaffSlot(STAFF_USER);
+  const nextSlot    = getNextStaffSlot(STAFF_USER);
+  const displaySlot = currentSlot || nextSlot;
+  const nextRoom    = displaySlot ? getRoomById(displaySlot.roomId) : null;
+  const todaySchedule = getStaffScheduleForToday(STAFF_USER);
+  
+  // Calculate time remaining for next slot
+  const getTimeRemaining = (targetTimeStr) => {
+    if (!targetTimeStr) return '';
+    const now = new Date();
+    const [hours, minutes] = targetTimeStr.split(':').map(Number);
+    const targetDate = new Date();
+    targetDate.setHours(hours, minutes, 0, 0);
+    
+    const diffMs = targetDate - now;
+    if (diffMs <= 0) return 'Started';
+    const diffMins = Math.floor(diffMs / 60000);
+    const h = Math.floor(diffMins / 60);
+    const m = diffMins % 60;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m} min`;
+  };
+
+  const isLab = displaySlot?.subject?.toLowerCase().includes('lab');
+
+  // Hardcoded breaks for staff example
+  const breaks = [
+    { type: 'Tea Break', start: '11:00', end: '11:15' },
+    { type: 'Lunch Break', start: '13:00', end: '14:00' }
+  ];
+  
+  const nowHhmm = `${String(time.getHours()).padStart(2,'0')}:${String(time.getMinutes()).padStart(2,'0')}`;
+  const nextBreak = breaks.find(b => b.start > nowHhmm) || null;
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 space-y-8 page-enter">
+      {/* ── Admin announcement banner ── */}
+      {announcements.length > 0 && (
+        <div
+          className="glass-card p-4 md:p-5 flex flex-col gap-2 rounded-2xl"
+          style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.25)' }}
+        >
+          {announcements.map((a) => (
+            <div key={a.id} className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5">
+                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                <p className="font-mono text-xs font-semibold text-red-500">
+                  <span className="font-bold uppercase tracking-wider">[{a.severity}]</span> {a.text}
+                </p>
+              </div>
+              <button
+                onClick={() => removeAnnouncement(a.id)}
+                className="glass-btn glass-btn-ghost glass-btn-sm text-[10px] text-red-500 hover:text-red-600 rounded-full shrink-0"
+              >
+                Dismiss
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* ── Staff Hero / Welcome ── */}
+      <div
+        className="rounded-3xl p-6 md:p-10 relative overflow-hidden"
+        style={{
+          border: '1px solid var(--glass-border)',
+          boxShadow: 'var(--shadow-sm), inset 0 1px 1px rgba(255,255,255,0.5)',
+          background: 'var(--bg-elevated)',
+          isolation: 'isolate',
+        }}
+      >
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+          <div className="max-w-xl">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full mb-4 border border-[var(--glass-border)] transition-all duration-300 cursor-default" style={{ background: 'rgba(0,0,0,0.04)' }}>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="font-mono text-[10px] font-semibold tracking-wider uppercase text-[var(--text-muted)]">
+                {date} · ALTS CAMPUS
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 shrink-0 liquid-glass-icon shadow-lg" style={{ background: 'linear-gradient(135deg, #007AFF 0%, #34C759 100%)' }}>
+                <div className="w-[28px] h-[28px] rounded-full inner-glass-symbol flex items-center justify-center">
+                  <span className="font-display font-black text-white text-[16px] drop-shadow-md">N</span>
+                </div>
+              </div>
+              <span className="font-display font-black text-2xl tracking-tight text-[var(--text-primary)]">
+                NaviGO Staff
+              </span>
+            </div>
+
+            <div className="mb-4">
+              <h1 className="liquid-text font-display font-black leading-none tracking-tighter" style={{ fontSize: 'clamp(3rem, 8vw, 5rem)', marginLeft: '-0.05em' }}>
+                Dr. Priya Sharma
+              </h1>
+            </div>
+
+            <p className="mt-4 text-[var(--text-secondary)] font-mono text-sm uppercase tracking-widest leading-relaxed">
+              Professor · Computer Science Engineering
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:items-end w-full sm:w-auto">
+            <button
+              onClick={() => navigateTo('timetable')}
+              className="glass-btn glass-btn-primary glass-btn-lg rounded-full shadow-lg flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              <Clock size={18} />
+              <span>My Timetable</span>
+              <ArrowRight size={16} />
+            </button>
+            <p className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-wider text-right mt-2">
+              Current Status: {todaySchedule.length ? 'Teaching Day' : 'No Classes Today'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-30">
+        
+        {/* Next Class / Lab Session Widget */}
+        <div className="lg:col-span-2 relative z-40">
+          <div className="glass-card glass-2 rounded-3xl p-6 md:p-8 flex flex-col justify-between border border-[var(--glass-border-strong)] shadow-lg h-full">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="font-display font-bold text-lg uppercase tracking-tight text-[var(--text-primary)] flex items-center gap-2">
+                <BookOpen size={20} className={isLab ? 'text-amber-500' : 'text-blue-500'} />
+                {currentSlot ? 'Ongoing Session' : nextSlot ? 'Next Session' : 'Schedule Finished'}
+              </h2>
+              {isLab && (
+                <span className="px-3 py-1 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-full font-mono text-[10px] uppercase font-bold tracking-widest">
+                  Lab Session
+                </span>
+              )}
+            </div>
+
+            {displaySlot ? (
+              <div className="flex flex-col md:flex-row gap-6 items-start justify-between">
+                <div>
+                  <h3 className="font-display text-4xl font-black text-[var(--text-primary)] tracking-tight mb-2">
+                    {displaySlot.subject}
+                  </h3>
+                  <p className="text-[var(--text-secondary)] font-mono text-sm uppercase tracking-widest mb-4">
+                    Class: {displaySlot.classId.replace('_', '-').toUpperCase()}
+                  </p>
+                  
+                  <div className="flex items-center gap-4 text-sm font-medium text-[var(--text-secondary)]">
+                    <div className="flex items-center gap-1.5">
+                      <Clock size={16} className="text-[var(--text-muted)]" />
+                      <span>{displaySlot.startTime} – {displaySlot.endTime}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Building size={16} className="text-[var(--text-muted)]" />
+                      <span>{nextRoom?.code || displaySlot.roomId}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3 w-full md:w-auto">
+                  {!currentSlot && (
+                    <div className="text-center p-4 bg-black/5 dark:bg-white/5 rounded-2xl border border-[var(--glass-border)]">
+                      <p className="font-mono text-[10px] text-[var(--text-muted)] uppercase tracking-widest mb-1">Starts in</p>
+                      <p className="font-mono text-2xl font-bold text-[var(--gold)]">{getTimeRemaining(displaySlot.startTime)}</p>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => navigateTo('route')}
+                    className="glass-btn glass-btn-primary flex items-center justify-center gap-2 rounded-xl py-3 px-6"
+                  >
+                    <Navigation size={16} />
+                    <span>Route to Room</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="py-12 flex flex-col items-center justify-center text-center h-full opacity-60">
+                <Trophy size={48} className="mb-4 text-[var(--text-muted)]" />
+                <h3 className="font-display text-xl font-bold text-[var(--text-primary)]">No more classes scheduled for today.</h3>
+                <p className="text-sm text-[var(--text-secondary)] mt-2">Enjoy your free time.</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Next Break Widget */}
+        <div className="flex flex-col gap-6">
+          <div className="glass-card rounded-3xl p-6 border border-[var(--glass-border)] shadow-sm">
+            <h2 className="font-display font-bold text-sm uppercase tracking-tight text-[var(--text-primary)] mb-4 flex items-center gap-2">
+              <Clock size={16} className="text-emerald-500" />
+              Next Break
+            </h2>
+            {nextBreak ? (
+              <div>
+                <p className="font-display text-2xl font-bold text-[var(--text-primary)] mb-1">
+                  {nextBreak.type}
+                </p>
+                <p className="font-mono text-sm text-[var(--text-secondary)] mb-4">
+                  {nextBreak.start} – {nextBreak.end}
+                </p>
+                <div className="text-xs font-mono px-3 py-2 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-lg inline-block">
+                  Starts in {getTimeRemaining(nextBreak.start)}
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-[var(--text-muted)] italic">No more breaks scheduled.</p>
+            )}
+          </div>
+
+          <div className="glass-card rounded-3xl p-6 border border-[var(--glass-border)] shadow-sm flex-1">
+            <h2 className="font-display font-bold text-sm uppercase tracking-tight text-[var(--text-primary)] mb-4 flex items-center gap-2">
+              <BookOpen size={16} className="text-purple-500" />
+              Today's Schedule
+            </h2>
+            
+            {todaySchedule.length > 0 ? (
+              <div className="space-y-4">
+                {todaySchedule.map(slot => {
+                  const isPast = nowHhmm >= slot.endTime;
+                  const isCurrent = nowHhmm >= slot.startTime && nowHhmm < slot.endTime;
+                  return (
+                    <div key={slot.id} className={`flex gap-3 items-start ${isPast ? 'opacity-40' : ''}`}>
+                      <div className="font-mono text-xs text-[var(--text-muted)] w-12 pt-0.5">
+                        {slot.startTime}
+                      </div>
+                      <div className="flex-1">
+                        <p className={`text-sm font-semibold ${isCurrent ? 'text-[var(--gold)]' : 'text-[var(--text-primary)]'}`}>
+                          {slot.subject}
+                        </p>
+                        <p className="text-xs text-[var(--text-secondary)]">
+                          {slot.classId.replace('_', '-').toUpperCase()} · Room {getRoomById(slot.roomId)?.code || slot.roomId}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-[var(--text-muted)] italic">No classes today.</p>
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   );

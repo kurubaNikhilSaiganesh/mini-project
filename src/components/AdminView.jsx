@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
 import { BUILDINGS, FACULTY, ROOMS, CLASSES, TIMETABLE, getRoomById, getClassById } from '../data';
 import { Pencil, Plus, X } from 'lucide-react';
+import { GlassTabs } from './ui/GlassTabs';
 
 const CATEGORIES = ['WORKSHOP', 'LECTURE', 'TECH_FEST', 'HACKATHON', 'CULTURAL_FEST', 'SPORTS', 'COMPETITION'];
 const SEVERITIES = ['ALERT', 'NOTICE', 'DEADLINE', 'UPDATE', 'EMERGENCY'];
@@ -145,13 +146,15 @@ export default function AdminView() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2.5 mb-8">
         {stats.map((s) => (
-          <div key={s.label} className="glass-card border border-[var(--glass-border)] p-4 rounded-2xl">
-            <p className="font-mono text-[9px] text-[var(--text-muted)] uppercase tracking-widest mb-1">{s.label}</p>
-            <p className="font-display text-3xl font-bold" style={{ color: s.color, textShadow: `0 0 10px ${s.color}66` }}>
-              {String(s.value).padStart(2, '0')}
-            </p>
+          <div key={s.label} className="glass-card border border-[var(--glass-border)] px-4 py-3 rounded-2xl flex items-center gap-3">
+            <div>
+              <p className="font-mono text-[8px] text-[var(--text-muted)] uppercase tracking-widest leading-none mb-1">{s.label}</p>
+              <p className="font-display text-xl font-bold leading-none" style={{ color: s.color }}>
+                {String(s.value).padStart(2, '0')}
+              </p>
+            </div>
           </div>
         ))}
       </div>
@@ -180,61 +183,44 @@ export default function AdminView() {
       )}
 
       {/* Tabs */}
-      <div className="flex border-b border-[var(--glass-border)] mb-6 overflow-x-auto scrollbar-hide gap-2 pb-2">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`font-mono text-[10px] uppercase tracking-wider px-4 py-2 rounded-full whitespace-nowrap transition-all duration-300 ${
-              activeTab === tab.id
-                ? 'bg-[var(--gold)] text-white shadow-[var(--shadow-gold)] font-bold scale-105'
-                : 'glass-btn glass-btn-ghost text-[var(--text-muted)] hover:bg-[var(--glass-2)] hover:text-[var(--text-primary)] hover:scale-105'
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="mb-6">
+        <GlassTabs
+          tabs={TABS}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          variant="gold"
+        />
       </div>
 
       {/* ── Events Tab ── */}
       {activeTab === 'events' && (
         <div className="glass-card rounded-2xl overflow-hidden border border-[var(--glass-border)] mb-6 shadow-lg">
-          <div className="flex flex-wrap sm:flex-nowrap items-center justify-between gap-4 px-6 py-4.5 border-b border-[var(--glass-border)] glass-2">
+          <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[var(--glass-border)] w-full">
             <div>
-              <h2 className="font-display text-xl font-bold uppercase tracking-tight text-[var(--text-primary)]">
+              <h2 className="font-display text-lg font-bold uppercase tracking-tight text-[var(--text-primary)]">
                 Events Management
               </h2>
-              <p className="font-mono text-[10px] text-gray-500 mt-0.5">{events.length} events in system</p>
+              <p className="font-mono text-[10px] text-[var(--text-muted)] mt-1">{events.length} events in system</p>
             </div>
 
-            {/* Bar Pencil Pill Dock & Button */}
-            <div className="p-1 rounded-full glass-1 border border-[var(--glass-border-strong)] shadow-sm shrink-0 mr-1 flex items-center bg-black/5 dark:bg-white/5">
-              <button
-                onClick={() => setShowAddEvent(!showAddEvent)}
-                className="group flex items-center gap-2 px-5 py-2 rounded-full font-bold text-xs tracking-wide text-white transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer"
-                style={{
-                  background: showAddEvent
-                    ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)'
-                    : 'linear-gradient(135deg, #007AFF 0%, #0056B3 100%)',
-                  boxShadow: showAddEvent
-                    ? '0 4px 14px rgba(239, 68, 68, 0.4)'
-                    : '0 4px 14px rgba(0, 122, 255, 0.4)',
-                }}
-                aria-label={showAddEvent ? 'Cancel adding event' : 'Add event'}
-              >
-                {showAddEvent ? (
-                  <>
-                    <X size={14} className="shrink-0 transition-transform duration-200 group-hover:rotate-90" />
-                    <span>Cancel</span>
-                  </>
-                ) : (
-                  <>
-                    <Pencil size={13} className="shrink-0 transition-transform duration-300 group-hover:-rotate-12" />
-                    <span>+ Add Event</span>
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              onClick={() => setShowAddEvent(!showAddEvent)}
+              className="glass-btn rounded-full px-5 py-2.5 shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 flex items-center gap-2 font-bold text-xs tracking-wide"
+              style={{
+                background: showAddEvent
+                  ? 'rgba(239, 68, 68, 0.15)'
+                  : 'var(--gold-light)',
+                color: showAddEvent ? 'var(--red)' : 'var(--gold)',
+                border: `1px solid ${showAddEvent ? 'rgba(239, 68, 68, 0.3)' : 'rgba(0, 122, 255, 0.3)'}`,
+              }}
+              aria-label={showAddEvent ? 'Cancel adding event' : 'Add event'}
+            >
+              {showAddEvent ? (
+                <><X size={14} className="shrink-0 transition-transform duration-200 hover:rotate-90" /><span>Cancel</span></>
+              ) : (
+                <><Pencil size={13} className="shrink-0 transition-transform duration-300" /><span>+ Add Event</span></>
+              )}
+            </button>
           </div>
 
           {showAddEvent && (
@@ -300,7 +286,7 @@ export default function AdminView() {
                 </div>
                 <button
                   onClick={() => handleDeleteEvent(event.id)}
-                  className="shrink-0 w-8 h-8 flex items-center justify-center border-2 border-[#FF4757] text-[#FF4757] hover:bg-[#FF4757] hover:text-white transition-colors"
+                  className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[#FF4757] hover:bg-[#FF4757]/15 transition-all duration-200 hover:scale-110"
                   aria-label={`Delete ${event.title}`}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

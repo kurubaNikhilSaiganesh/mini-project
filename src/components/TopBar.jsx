@@ -10,7 +10,7 @@ const VIEW_LABELS = {
   today: 'Home', route: 'Find a Route', directory: 'Campus Directory',
   events: 'Events', notices: 'Notices', timetable: 'Timetable',
   classes: 'Classes', faculty: 'Faculty', rooms: 'Rooms',
-  exams: 'Examinations', seating: 'Exam Seating', search: 'Search',
+  exams: 'Examinations', seating: 'Exam Seating',
   admin: 'Admin Panel',
 };
 
@@ -18,7 +18,7 @@ const VIEW_ICONS = {
   today:     '🏠', route:    '🗺️', directory: '🏛️',
   events:    '🎟️', notices: '📢', timetable: '🕐',
   classes:   '📚', faculty: '👥', rooms:      '🚪',
-  exams:     '📝', seating: '📍', search:     '🔍',
+  exams:     '📝', seating: '📍',
   admin:     '🛡️',
 };
 
@@ -61,7 +61,7 @@ export default function TopBar({
   const [topSearch, setTopSearch] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileSearchExpanded, setMobileSearchExpanded] = useState(false);
-  const { setActiveView, locateOnMap } = useContext(AppContext);
+  const { setActiveView, locateOnMap, userRole } = useContext(AppContext);
   const searchContainerRef = useRef(null);
 
   useEffect(() => {
@@ -149,120 +149,127 @@ export default function TopBar({
               ALTS
             </button>
 
-            <span style={{ color: 'var(--text-subtle)' }} className="text-xs select-none">/</span>
-
-            <div className="flex items-center gap-1.5">
-              {icon && (
-                <span className="text-sm leading-none" aria-hidden="true">{icon}</span>
-              )}
-              <span
-                className="text-sm font-semibold tracking-tight"
-                style={{ color: 'var(--text-primary)' }}
-              >
-                {label}
-              </span>
-            </div>
+            {activeView !== 'today' && (
+              <>
+                <span style={{ color: 'var(--text-subtle)' }} className="text-xs select-none">/</span>
+                <div className="flex items-center gap-1.5">
+                  {icon && (
+                    <span className="text-sm leading-none" aria-hidden="true">{icon}</span>
+                  )}
+                  <span
+                    className="text-sm font-semibold tracking-tight"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {label}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         {/* Right — Live interactive search box + theme toggle */}
         <div className="flex items-center gap-2" ref={searchContainerRef}>
-          {/* Desktop live interactive search box */}
-          <div className="relative hidden md:block">
-            <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-              <Search
-                size={14}
-                className="absolute left-3.5 text-[var(--text-muted)] pointer-events-none select-none transition-colors"
-              />
-              <input
-                type="text"
-                value={topSearch}
-                onChange={(e) => {
-                  setTopSearch(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onFocus={() => {
-                  if (topSearch.trim()) setShowDropdown(true);
-                }}
-                placeholder="Search campus, rooms, faculty…"
-                className="rounded-full pl-9 pr-8 py-1.5 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[rgba(0,0,0,0.04)] dark:bg-[rgba(255,255,255,0.06)] border border-[var(--glass-border)] outline-none w-52 focus:w-72 transition-all duration-300 focus:border-[var(--gold)]/60 focus:bg-[var(--glass-3)] shadow-inner"
-                aria-label="Search campus data"
-              />
-              {topSearch ? (
-                <button
-                  type="button"
-                  onClick={() => { setTopSearch(''); setShowDropdown(false); }}
-                  className="absolute right-2.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors p-0.5"
-                  aria-label="Clear search"
-                >
-                  <X size={12} />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setCmdOpen(true)}
-                  className="absolute right-2 text-[9.5px] font-mono px-1.5 py-0.5 rounded-full text-[var(--text-subtle)] hover:text-[var(--gold)] bg-[var(--glass-1)] border border-[var(--glass-border)] transition-colors"
-                  title="Open full command palette"
-                >
-                  ⌘K
-                </button>
-              )}
-            </form>
-
-            {/* Instant live results dropdown under right-side search box */}
-            {showDropdown && filteredQuick.length > 0 && (
-              <div
-                className="absolute right-0 top-full mt-2 w-80 rounded-2xl glass-modal border border-[var(--glass-border-strong)] p-2 shadow-2xl backdrop-blur-2xl z-50 animate-in fade-in duration-150"
-                style={{ background: 'var(--glass-4)' }}
-              >
-                <div className="px-2.5 py-1 flex items-center justify-between border-b border-[var(--glass-border)] pb-1.5 mb-1">
-                  <span className="font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)] font-semibold">
-                    Live Matches
-                  </span>
-                  <span className="font-mono text-[9px] text-[var(--gold)]">
-                    {filteredQuick.length} found
-                  </span>
-                </div>
-                <div className="space-y-1">
-                  {filteredQuick.map((item) => (
+          {userRole !== 'staff' && (
+            <>
+              {/* Desktop live interactive search box */}
+              <div className="relative hidden md:block">
+                <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+                  <Search
+                    size={14}
+                    className="absolute left-3.5 text-[var(--text-muted)] pointer-events-none select-none transition-colors"
+                  />
+                  <input
+                    type="text"
+                    value={topSearch}
+                    onChange={(e) => {
+                      setTopSearch(e.target.value);
+                      setShowDropdown(true);
+                    }}
+                    onFocus={() => {
+                      if (topSearch.trim()) setShowDropdown(true);
+                    }}
+                    placeholder="Search campus, rooms, faculty…"
+                    className="rounded-full pl-9 pr-8 py-1.5 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] bg-[rgba(0,0,0,0.04)] dark:bg-[rgba(255,255,255,0.06)] border border-[var(--glass-border)] outline-none w-52 focus:w-72 transition-all duration-300 focus:border-[var(--gold)]/60 focus:bg-[var(--glass-3)] shadow-inner"
+                    aria-label="Search campus data"
+                  />
+                  {topSearch ? (
                     <button
-                      key={`${item.type}-${item.id}`}
-                      onClick={() => handleSelectItem(item)}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-[var(--glass-2)] transition-colors group"
+                      type="button"
+                      onClick={() => { setTopSearch(''); setShowDropdown(false); }}
+                      className="absolute right-2.5 text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors p-0.5"
+                      aria-label="Clear search"
                     >
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[var(--glass-2)] border border-[var(--glass-border)] text-[var(--gold)] shrink-0">
-                        <Building2 size={11} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-[var(--text-primary)] truncate group-hover:text-[var(--gold)] transition-colors">
-                          {item.title}
-                        </p>
-                        <p className="font-mono text-[9px] text-[var(--text-muted)] truncate">
-                          {item.subtitle}
-                        </p>
-                      </div>
-                      <ArrowRight size={11} className="text-[var(--text-subtle)] group-hover:text-[var(--text-primary)] shrink-0 transition-transform group-hover:translate-x-0.5" />
+                      <X size={12} />
                     </button>
-                  ))}
-                </div>
-                <button
-                  onClick={handleSearchSubmit}
-                  className="w-full mt-1.5 pt-1.5 border-t border-[var(--glass-border)] text-center text-[10.5px] font-semibold text-[var(--gold)] hover:underline block"
-                >
-                  View all results in Search page →
-                </button>
-              </div>
-            )}
-          </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setCmdOpen(true)}
+                      className="absolute right-2 text-[9.5px] font-mono px-1.5 py-0.5 rounded-full text-[var(--text-subtle)] hover:text-[var(--gold)] bg-[var(--glass-1)] border border-[var(--glass-border)] transition-colors"
+                      title="Open full command palette"
+                    >
+                      ⌘K
+                    </button>
+                  )}
+                </form>
 
-          {/* Mobile search toggle */}
-          <button
-            onClick={() => setMobileSearchExpanded(!mobileSearchExpanded)}
-            className="md:hidden glass-btn glass-btn-ghost glass-btn-icon rounded-full"
-            aria-label="Toggle mobile search"
-          >
-            <Search size={16} />
-          </button>
+                {/* Instant live results dropdown under right-side search box */}
+                {showDropdown && filteredQuick.length > 0 && (
+                  <div
+                    className="absolute right-0 top-full mt-2 w-80 rounded-2xl glass-modal border border-[var(--glass-border-strong)] p-2 shadow-2xl backdrop-blur-2xl z-50 animate-in fade-in duration-150"
+                    style={{ background: 'var(--glass-4)' }}
+                  >
+                    <div className="px-2.5 py-1 flex items-center justify-between border-b border-[var(--glass-border)] pb-1.5 mb-1">
+                      <span className="font-mono text-[9px] uppercase tracking-wider text-[var(--text-muted)] font-semibold">
+                        Live Matches
+                      </span>
+                      <span className="font-mono text-[9px] text-[var(--gold)]">
+                        {filteredQuick.length} found
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      {filteredQuick.map((item) => (
+                        <button
+                          key={`${item.type}-${item.id}`}
+                          onClick={() => handleSelectItem(item)}
+                          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left hover:bg-[var(--glass-2)] transition-colors group"
+                        >
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center bg-[var(--glass-2)] border border-[var(--glass-border)] text-[var(--gold)] shrink-0">
+                            <Building2 size={11} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-[var(--text-primary)] truncate group-hover:text-[var(--gold)] transition-colors">
+                              {item.title}
+                            </p>
+                            <p className="font-mono text-[9px] text-[var(--text-muted)] truncate">
+                              {item.subtitle}
+                            </p>
+                          </div>
+                          <ArrowRight size={11} className="text-[var(--text-subtle)] group-hover:text-[var(--text-primary)] shrink-0 transition-transform group-hover:translate-x-0.5" />
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={handleSearchSubmit}
+                      className="w-full mt-1.5 pt-1.5 border-t border-[var(--glass-border)] text-center text-[10.5px] font-semibold text-[var(--gold)] hover:underline block"
+                    >
+                      View all results in Search page →
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile search toggle */}
+              <button
+                onClick={() => setMobileSearchExpanded(!mobileSearchExpanded)}
+                className="md:hidden glass-btn glass-btn-ghost glass-btn-icon rounded-full"
+                aria-label="Toggle mobile search"
+              >
+                <Search size={16} />
+              </button>
+            </>
+          )}
 
           {/* Theme toggle */}
           <button
