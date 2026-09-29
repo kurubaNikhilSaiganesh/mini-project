@@ -20,11 +20,11 @@ DATA_FILE = os.path.join(os.path.dirname(__file__), "data.json")
 def read_data():
     if not os.path.exists(DATA_FILE):
         return {"events": [], "classes": []}
-    with open(DATA_FILE, "r") as f:
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def write_data(data):
-    with open(DATA_FILE, "w") as f:
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
 from typing import Dict, Any

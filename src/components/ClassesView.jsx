@@ -32,7 +32,7 @@ export default function ClassesView() {
               <button
                 key={cls.id}
                 onClick={() => setSelectedClassId(isSelected ? null : cls.id)}
-                className={`w-full text-left p-4.5 rounded-2xl glass-card border transition-all duration-200 select-none ${
+                className={`w-full text-left p-4.5 rounded-2xl glass-card border transition-all duration-200 select-none overflow-hidden ${
                   isSelected
                     ? 'border-[var(--gold)] bg-[var(--gold)]/10 shadow-sm scale-[1.01]'
                     : 'border-[var(--glass-border)] hover:border-[var(--glass-border-strong)] hover:bg-[var(--glass-2)]'
@@ -50,8 +50,8 @@ export default function ClassesView() {
                   </span>
                   <span className="font-mono text-[9px] text-[var(--text-muted)] font-semibold">YEAR {cls.year}</span>
                 </div>
-                <p className="font-bold text-sm text-[var(--text-primary)]">{cls.name}</p>
-                <p className="font-mono text-[10px] text-[var(--text-muted)] mt-1">{cls.department}</p>
+                <p className="font-bold text-sm text-[var(--text-primary)] truncate">{cls.name}</p>
+                <p className="font-mono text-[10px] text-[var(--text-muted)] mt-1 truncate">{cls.department}</p>
                 <p className="font-mono text-[9px] text-[var(--text-subtle)] mt-1">{cls.strength} students</p>
               </button>
             );

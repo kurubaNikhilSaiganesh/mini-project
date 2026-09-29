@@ -1,5 +1,5 @@
 // ============================================================
-// CAMPUS_NAV — DATA MODULE
+// CAMPUS_NAV - DATA MODULE
 // Buildings, Events, Pathways, Adjacency Graph,
 // Classes, Faculty, Rooms, Timetable
 // ============================================================
@@ -291,7 +291,7 @@ export const EVENTS = [
     time: "10:00 AM",
     venue: "tech_labs",
     venueName: "TECH LABS",
-    description: "Build real-world solutions in 24 hours. Teams of 3–5. Prize pool: ₹50,000.",
+    description: "Build real-world solutions in 24 hours. Teams of 3-5. Prize pool: ₹50,000.",
     organizer: "Innovation Cell",
     status: "UPCOMING",
     span: "medium",
@@ -330,7 +330,7 @@ export const EVENTS = [
     time: "10:00 AM",
     venue: "tech_labs",
     venueName: "TECH LABS",
-    description: "Hands-on workshop on modern full-stack development. Limited seats — 40 participants.",
+    description: "Hands-on workshop on modern full-stack development. Limited seats - 40 participants.",
     organizer: "Web Dev Club",
     status: "UPCOMING",
     span: "small",
@@ -365,11 +365,11 @@ export const EVENTS = [
 
 export const MARQUEE_ITEMS = [
   "[ALERT] TECHFEST REGISTRATIONS CLOSE 2026.10.10",
-  "[NOTICE] LIBRARY EXTENDED HOURS THIS WEEK — OPEN TILL 22:00",
+  "[NOTICE] LIBRARY EXTENDED HOURS THIS WEEK - OPEN TILL 22:00",
   "[DEADLINE] HACKATHON TEAM SUBMISSIONS DUE FRIDAY",
-  "[UPDATE] SPORTS COMPLEX RESURFACING COMPLETE — OPEN MONDAY",
-  "[ALERT] SEMESTER EXAMS SCHEDULE PUBLISHED — CHECK PORTAL",
-  "[NOTICE] CAMPUS WIFI UPGRADE IN PROGRESS — ACADEMIC BLOCKS",
+  "[UPDATE] SPORTS COMPLEX RESURFACING COMPLETE - OPEN MONDAY",
+  "[ALERT] SEMESTER EXAMS SCHEDULE PUBLISHED - CHECK PORTAL",
+  "[NOTICE] CAMPUS WIFI UPGRADE IN PROGRESS - ACADEMIC BLOCKS",
   "[DEADLINE] CULTURALIA REGISTRATION: 2026.10.30",
   "[UPDATE] NEW E-RESOURCES ADDED TO CENTRAL LIBRARY DATABASE",
 ];
@@ -527,7 +527,7 @@ export function getRoomByClassId(classId) {
 export const CLASSES = [
   {
     id: "cs_2a",
-    name: "2nd Year CSE — Section A",
+    name: "2nd Year CSE - Section A",
     shortName: "CS-2A",
     year: 2,
     department: "Computer Science Engineering",
@@ -539,7 +539,7 @@ export const CLASSES = [
   },
   {
     id: "cs_3a",
-    name: "3rd Year CSE — Section A",
+    name: "3rd Year CSE - Section A",
     shortName: "CS-3A",
     year: 3,
     department: "Computer Science Engineering",
@@ -551,7 +551,7 @@ export const CLASSES = [
   },
   {
     id: "cs_3b",
-    name: "3rd Year CSE — Section B",
+    name: "3rd Year CSE - Section B",
     shortName: "CS-3B",
     year: 3,
     department: "Computer Science Engineering",
@@ -563,7 +563,7 @@ export const CLASSES = [
   },
   {
     id: "cs_4a",
-    name: "4th Year CSE — Section A",
+    name: "4th Year CSE - Section A",
     shortName: "CS-4A",
     year: 4,
     department: "Computer Science Engineering",
@@ -575,7 +575,7 @@ export const CLASSES = [
   },
   {
     id: "it_2b",
-    name: "2nd Year IT — Section B",
+    name: "2nd Year IT - Section B",
     shortName: "IT-2B",
     year: 2,
     department: "Information Technology",
@@ -587,7 +587,7 @@ export const CLASSES = [
   },
   {
     id: "it_3a",
-    name: "3rd Year IT — Section A",
+    name: "3rd Year IT - Section A",
     shortName: "IT-3A",
     year: 3,
     department: "Information Technology",
@@ -599,7 +599,7 @@ export const CLASSES = [
   },
   {
     id: "me_2a",
-    name: "2nd Year MECH — Section A",
+    name: "2nd Year MECH - Section A",
     shortName: "ME-2A",
     year: 2,
     department: "Mechanical Engineering",
@@ -611,7 +611,7 @@ export const CLASSES = [
   },
   {
     id: "ce_3a",
-    name: "3rd Year CIVIL — Section A",
+    name: "3rd Year CIVIL - Section A",
     shortName: "CE-3A",
     year: 3,
     department: "Civil Engineering",
@@ -623,7 +623,7 @@ export const CLASSES = [
   },
   {
     id: "mba_1a",
-    name: "1st Year MBA — Section A",
+    name: "1st Year MBA - Section A",
     shortName: "MBA-1A",
     year: 1,
     department: "MBA",
